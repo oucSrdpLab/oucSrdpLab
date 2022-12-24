@@ -1,0 +1,11 @@
+# created by virtualenv automatically
+*
+/.
+/pyvenv.cfg
+/.gitignore
+/app.py
+/templates/index.html
+/templates/
+/static/
+/Scripts/
+/Lib/
