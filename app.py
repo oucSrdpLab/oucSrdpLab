@@ -9,7 +9,7 @@ app.config['STATIC_URL_PATH']='/static'
 HOSTNAME="localhost"
 PORT=3306
 USERNAME="root"
-PASSWORD="129238905ad"
+PASSWORD="2023.4.22"
 DATABASE="welab"
 
 app.config['SQLALCHEMY_DATABASE_URI']=f"mysql+pymysql://{USERNAME}:{PASSWORD}@{HOSTNAME}:{PORT}/{DATABASE}?charset=utf8mb4"
