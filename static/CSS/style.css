@@ -1,0 +1,100 @@
+.box{
+  position: relative;
+}
+
+.left{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: stretch;
+  float: left;
+  width: 450px;
+  height: 600px;
+  border-right: 1px solid #ccc;
+}
+
+._calendar{
+  position: relative;
+  width: 450px;
+  height: 600px;
+}
+
+#dycalendar {
+  width: 100%;
+  padding: 40px 0 40px;
+}
+
+#dycalendar table{
+  width: 100%;
+  border-spacing: 12px;
+  margin-top: 40px;
+}
+
+#dycalendar table tr:nth-child(1) td {
+  background-color: #2196f3;
+  color: #fff;
+  border-radius: 10px;
+  font-weight: 600;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1), -5px -5px 10px #fff;
+}
+
+#dycalendar table tr:nth-child(1) td:nth-child(1) {
+  background-color: #f44336;
+}
+
+#dycalendar table td{
+  color: #777;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: 500;
+  border-radius: 10px;
+  font-size: 1.25em;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1), -5px -5px 10px #fff;
+}
+
+#dycalendar table td:hover{
+  box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.1), inset -5px -5px 10px #fff;
+}
+
+#dycalendar table td:first-child{
+  color: #f44336;
+}
+
+
+.dycalendar-month-container .dycalendar-target-date{
+  background-color: #2196f3;
+  color: #fff !important;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1), -5px -5px 10px #fff !important;
+  border: 2px solid #edf1f4;
+}
+
+.dycalendar-month-container .dycalendar-header .dycalendar-prev-next-btn.prev-btn{
+  position: absolute;
+  width: 45px;
+  height: 45px;
+  line-height: 45px;
+  font-size: 1.25em;
+  font-weight: 400;
+  left: 15px;
+  color: #777;
+  border-radius: 10px;
+}
+
+.dycalendar-month-container .dycalendar-header .dycalendar-prev-next-btn.next-btn{
+  position: absolute;
+  right: 15px;
+  width: 45px;
+  height: 45px;
+  line-height: 45px;
+  font-weight: 400;
+  font-size:  1.25em;
+  color: #777;
+  border-radius: 10px;
+}
+
+.dycalendar-month-container .dycalendar-span-month-year{
+  color: #2196f3;
+  font-size: 2em;
+  font-weight: 400;
+}
