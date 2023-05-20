@@ -12,7 +12,9 @@
  * Date: 2014-08-17 sunday
  */
 /*! dyCalendarJS | (c) 2016 Yusuf Shakeel | https://github.com/yusufshakeel/dyCalendarJS */
-(function (global) {
+
+(function (global) 
+{
 
     "use strict";
 
@@ -50,17 +52,17 @@
      * @param object option this is the settings object
      * @return html
      */
-    function createMonthTable(data, option) {
-
+    function createMonthTable(data, option) 
+    {
         var
             table, tr, td,
             r, c, count;
 
         table = document.createElement("table");
         tr = document.createElement("tr");
-
         //create 1st row for the day letters
-        for (c = 0; c <= 6; c = c + 1) {
+        for (c = 0; c <= 6; c = c + 1) 
+        {
             td = document.createElement("td");
             td.innerHTML = "SMTWTFS"[c];
             tr.appendChild(td);
@@ -71,25 +73,25 @@
         tr = document.createElement("tr");
 
         //blank td
-        for (c = 0; c <= 6; c = c + 1) {
-            if (c === data.firstDayIndex) {
+        for (c = 0; c <= 6; c = c + 1) 
+        {
+            if (c === data.firstDayIndex)
                 break;
-            }
             td = document.createElement("td");
+            td.setAttribute("class", "dycalender-blank-data");
             tr.appendChild(td);
         }
 
         //remaing td of dates for the 2nd row
         count = 1;
-        while (c <= 6) {
+        while (c <= 6) 
+        {
             td = document.createElement("td");
+            td.setAttribute("id", count);
+            td.setAttribute("class", "dst-date-user");
             td.innerHTML = count;
-            if (data.today.date === count && data.today.monthIndex === data.monthIndex && option.highlighttoday === true) {
-                td.setAttribute("class", "dycalendar-today-date");
-            }
-            if (option.date === count && option.month === data.monthIndex && option.highlighttargetdate === true) {
-                td.setAttribute("class", "dycalendar-target-date");
-            }
+            if (option.date === count && option.month === data.today.monthIndex && option.highlighttargetdate === true)
+                td.setAttribute("class", "dst-date-user dycalendar-target-date");
             tr.appendChild(td);
             count = count + 1;
             c = c + 1;
@@ -97,21 +99,23 @@
         table.appendChild(tr);
 
         //create remaining rows
-        for (r = 3; r <= 7; r = r + 1) {
+        for (r = 3; r <= 7; r = r + 1) 
+        {
             tr = document.createElement("tr");
-            for (c = 0; c <= 6; c = c + 1) {
-                if (count > data.totaldays) {
+            for (c = 0; c <= 6; c = c + 1) 
+            {
+                if (count > data.totaldays) 
+                {
                     table.appendChild(tr);
                     return table;
                 }
                 td = document.createElement('td');
+                td.setAttribute("id", count);
+                td.setAttribute("class", "dst-date-user");
                 td.innerHTML = count;
-                if (data.today.date === count && data.today.monthIndex === data.monthIndex && option.highlighttoday === true) {
-                    td.setAttribute("class", "dycalendar-today-date");
-                }
-                if (option.date === count && option.month === data.monthIndex && option.highlighttargetdate === true) {
-                    td.setAttribute("class", "dycalendar-target-date");
-                }
+                if (option.date === count && option.month === data.today.monthIndex && option.highlighttargetdate === true)
+                    td.setAttribute("class", "dst-date-user dycalendar-target-date");
+                //option.month
                 count = count + 1;
                 tr.appendChild(td);
             }
@@ -128,7 +132,8 @@
      * @param object option this is the settings object
      * @return html
      */
-    function drawCalendarMonthTable(data, option) {
+    function drawCalendarMonthTable(data, option) 
+    {
 
         var
             table,
@@ -149,42 +154,38 @@
         div.setAttribute("data-option", JSON.stringify(option));
 
         //prev button
-        if (option.prevnextbutton === "show") {
-            elem = document.createElement("span");
-            elem.setAttribute("class", "dycalendar-prev-next-btn prev-btn");
-            elem.setAttribute("data-date", option.date);
-            elem.setAttribute("data-month", option.month);
-            elem.setAttribute("data-year", option.year);
-            elem.setAttribute("data-btn", "prev");
-            elem.innerHTML = "&lt;";
-            //add prev button span to header div
-            div.appendChild(elem);
-        }
+        elem = document.createElement("span");
+        elem.setAttribute("class", "dycalendar-prev-next-btn prev-btn");
+        elem.setAttribute("id", "dycalendar-prev-next-btn");
+        elem.setAttribute("data-date", option.date);
+        elem.setAttribute("data-month", option.month);
+        elem.setAttribute("data-year", option.year);
+        elem.setAttribute("data-btn", "prev");
+        elem.innerHTML = "&lt;";
+        //add prev button span to header div
+        div.appendChild(elem);
 
         //month span
         elem = document.createElement("span");
         elem.setAttribute("class", "dycalendar-span-month-year");
-        if (option.monthformat === "mmm") {
+        if (option.monthformat === "mmm")
             elem.innerHTML = data.monthName + " " + data.year;
-        } else if (option.monthformat === "full") {
+        else if (option.monthformat === "full")
             elem.innerHTML = data.monthNameFull + " " + data.year;
-        }
 
         //add month span to header div
         div.appendChild(elem);
 
         //next button
-        if (option.prevnextbutton === "show") {
-            elem = document.createElement("span");
-            elem.setAttribute("class", "dycalendar-prev-next-btn next-btn");
-            elem.setAttribute("data-date", option.date);
-            elem.setAttribute("data-month", option.month);
-            elem.setAttribute("data-year", option.year);
-            elem.setAttribute("data-btn", "next");
-            elem.innerHTML = "&gt;";
-            //add prev button span to header div
-            div.appendChild(elem);
-        }
+        elem = document.createElement("span");
+        elem.setAttribute("class", "dycalendar-prev-next-btn next-btn");
+        elem.setAttribute("data-date", option.date);
+        elem.setAttribute("data-month", option.month);
+        elem.setAttribute("data-year", option.year);
+        elem.setAttribute("data-btn", "next");
+        elem.innerHTML = "&gt;";
+        //add prev button span to header div
+        div.appendChild(elem);
 
         //add header div to container
         container.appendChild(div);
@@ -204,102 +205,6 @@
     }
 
     /**
-     * this function will draw Calendar Day
-     *
-     * @param object data   this contains the calendar data
-     * @param object option this is the settings object
-     * @return html
-     */
-    function drawCalendarDay(data, option) {
-
-        var
-            div, container, elem;
-
-        //calendar container
-        container = document.createElement("div");
-        container.setAttribute("class", "dycalendar-day-container");
-
-        //-------------------------- Header ------------------
-
-        //header div
-        div = document.createElement("div");
-        div.setAttribute("class", "dycalendar-header");
-
-        //day span
-        elem = document.createElement("span");
-        elem.setAttribute("class", "dycalendar-span-day");
-        if (option.dayformat === "ddd") {
-            elem.innerHTML = dayName.ddd[data.targetedDayIndex];
-        } else if (option.dayformat === "full") {
-            elem.innerHTML = dayName.full[data.targetedDayIndex];
-        }
-
-        //add day span to footer div
-        div.appendChild(elem);
-
-        //add header div to container
-        container.appendChild(div);
-
-        //-------------------------- Body ------------------
-
-        //body div
-        div = document.createElement("div");
-        div.setAttribute("class", "dycalendar-body");
-
-        //date span
-        elem = document.createElement("span");
-        elem.setAttribute("class", "dycalendar-span-date");
-        elem.innerHTML = data.date;
-
-        //add date span to body div
-        div.appendChild(elem);
-
-        //add body div to container
-        container.appendChild(div);
-
-        //-------------------------- Footer ------------------
-
-        //footer div
-        div = document.createElement("div");
-        div.setAttribute("class", "dycalendar-footer");
-
-        //month span
-        elem = document.createElement("span");
-        elem.setAttribute("class", "dycalendar-span-month-year");
-        if (option.monthformat === "mmm") {
-            elem.innerHTML = data.monthName + " " + data.year;
-        } else if (option.monthformat === "full") {
-            elem.innerHTML = data.monthNameFull + " " + data.year;
-        }
-
-        //add month span to footer div
-        div.appendChild(elem);
-
-        //add footer div to container
-        container.appendChild(div);
-
-        //return container
-        return container;
-    }
-
-    /**
-     * this function will extend source object with defaults object.
-     *
-     * @param object source     this is the source object
-     * @param object defaults   this is the default object
-     * @return object
-     */
-    function extendSource(source, defaults) {
-        var property;
-        for (property in defaults) {
-            if (source.hasOwnProperty(property) === false) {
-                source[property] = defaults[property];
-            }
-        }
-        return source;
-    }
-
-    /**
      * This function will return calendar detail.
      *
      * @param integer year        1900-9999 (optional) if not set will consider
@@ -309,7 +214,8 @@
      * @param integer date      1-31 (optional)
      * @return boolean|object    if error return false, else calendar detail
      */
-    function getCalendar(year, month, date) {
+    function getCalendar(year, month, date) 
+    {
 
         var
             dateObj = new Date(),
@@ -317,15 +223,18 @@
             result = {},
             idx;
 
-        if (year < START_YEAR || year > END_YEAR) {
+        if (year < START_YEAR || year > END_YEAR) 
+        {
             global.console.error("Invalid Year");
             return false;
         }
-        if (month > 11 || month < 0) {
+        if (month > 11 || month < 0) 
+        {
             global.console.error("Invalid Month");
             return false;
         }
-        if (date > 31 || date < 1) {
+        if (date > 31 || date < 1) 
+        {
             global.console.error("Invalid Date");
             return false;
         }
@@ -392,9 +301,11 @@
     /**
      * this function will handle the on click event.
      */
-    function onClick() {
+    function onClick() 
+    {
 
-        document.body.onclick = function (e) {
+        document.body.onclick = function (e) 
+        {
 
             //get event object (window.event for IE compatibility)
             e = global.event || e;
@@ -404,50 +315,82 @@
                 targetDomObject = e.target || e.srcElement,
 
                 //other variables
-                date, month, year, btn, option, dateObj;
+                date, month, year, btn, last, option, dateObj;
 
             //prev-next button click
             //extra checks to make sure object exists and contains the class of interest
-            if ((targetDomObject) && (targetDomObject.classList) && (targetDomObject.classList.contains("dycalendar-prev-next-btn"))) {
-                date = parseInt(targetDomObject.getAttribute("data-date"));
-                month = parseInt(targetDomObject.getAttribute("data-month"));
-                year = parseInt(targetDomObject.getAttribute("data-year"));
-                btn = targetDomObject.getAttribute("data-btn");
-                option = JSON.parse(targetDomObject.parentElement.getAttribute("data-option"));
+            if (targetDomObject && targetDomObject.classList)
+            {
+                if (targetDomObject.classList.contains("dycalendar-prev-next-btn")) 
+                {
+                    date = parseInt(targetDomObject.getAttribute("data-date"));
+                    month = parseInt(targetDomObject.getAttribute("data-month"));
+                    year = parseInt(targetDomObject.getAttribute("data-year"));
+                    btn = targetDomObject.getAttribute("data-btn");
+                    option = JSON.parse(targetDomObject.parentElement.getAttribute("data-option"));
 
-                if (btn === "prev") {
-                    month = month - 1;
-                    if (month < 0) {
-                        year = year - 1;
-                        month = 11;
+                    if (btn === "prev") 
+                    {
+                        month = month - 1;
+                        if (month < 0) 
+                        {
+                            year = year - 1;
+                            month = 11;
+                        }
                     }
-                }
-                else if (btn === "next") {
-                    month = month + 1;
-                    if (month > 11) {
-                        year = year + 1;
-                        month = 0;
+                    else if (btn === "next") 
+                    {
+                        month = month + 1;
+                        if (month > 11) 
+                        {
+                            year = year + 1;
+                            month = 0;
+                        }
                     }
+
+                    option.date = date;
+                    option.month = month;
+                    option.year = year;
+
+                    drawCalendar(option);
                 }
 
-                option.date = date;
-                option.month = month;
-                option.year = year;
+                //month click
+                //extra checks to make sure object exists and contains the class of interest
+                if (targetDomObject.classList.contains("dycalendar-span-month-year")) 
+                {
+                    option = JSON.parse(targetDomObject.parentElement.getAttribute("data-option"));
+                    dateObj = new Date();
 
-                drawCalendar(option);
-            }
+                    option.date = dateObj.getDate();
+                    option.month = dateObj.getMonth();
+                    option.year = dateObj.getFullYear();
 
-            //month click
-            //extra checks to make sure object exists and contains the class of interest
-            if ((targetDomObject) && (targetDomObject.classList) && (targetDomObject.classList.contains("dycalendar-span-month-year"))) {
-                option = JSON.parse(targetDomObject.parentElement.getAttribute("data-option"));
-                dateObj = new Date();
+                    drawCalendar(option);
+                }
 
-                option.date = dateObj.getDate();
-                option.month = dateObj.getMonth();
-                option.year = dateObj.getFullYear();
+                if (targetDomObject.classList.contains("dst-date-user")) 
+                {
 
-                drawCalendar(option);
+                    var
+                        target = document.getElementById("dycalendar-prev-next-btn"),
+
+                        data = {
+                            year: target.getAttribute("data-year"),
+                            month: target.getAttribute("data-month"),
+                            date: parseInt(targetDomObject.getAttribute("id"))
+                        }
+
+                    createAppointedUser(data);
+                }
+
+                if (targetDomObject.classList.contains("dst-user-appointed")) 
+                {
+
+                    //对用户点击更新做出相应
+
+                    updateAppointedUser(option);
+                }
             }
         };
     }
@@ -473,13 +416,7 @@
      * @param object option     user preferences
      * @return boolean          true if success, false otherwise
      */
-    dycalendar.draw = function (option) {
-
-        //check if option is passed or not
-        if (typeof option === "undefined") {
-            global.console.error("Option missing");
-            return false;
-        }
+    dycalendar.draw = function () {
 
         var
             self = this,    //pointing at dycalendar object
@@ -487,22 +424,19 @@
             dateObj = new Date(),
 
             //default settings
-            defaults = {
-                type: "day",
-                month: dateObj.getMonth(),
+            option = {
                 year: dateObj.getFullYear(),
+                month: dateObj.getMonth(),
                 date: dateObj.getDate(),
+                target: '#dycalendar',
                 monthformat: "full",
                 dayformat: "full",
-                highlighttoday: false,
-                highlighttargetdate: false,
-                prevnextbutton: "hide"
+                highlighttargetdate: true
             };
 
-        //extend user options with predefined options
-        option = extendSource(option, defaults);
-
         drawCalendar(option);
+
+        createAppointedUser(option);
 
     };
 
@@ -517,54 +451,142 @@
             //variables for creating calendar
             calendar,
             calendarHTML,
-            targetedElementBy = "id",
-            targetElem,
-
-            //other variables
-            i, len, elemArr;
+            targetElem
 
         //find target element by
-        if (option.target[0] === "#") {
-            targetedElementBy = "id";
-        } else if (option.target[0] === ".") {
-            targetedElementBy = "class";
-        }
         targetElem = option.target.substring(1);
 
         //get calendar HTML
-        switch (option.type) {
-            case "day":
-                //get calendar detail
-                calendar = getCalendar(option.year, option.month, option.date);
-                //get calendar html
-                calendarHTML = drawCalendarDay(calendar, option);
-                break;
-
-            case "month":
-                //get calendar detail
-                calendar = getCalendar(option.year, option.month, option.date);
-                //get calendar html
-                calendarHTML = drawCalendarMonthTable(calendar, option);
-                break;
-
-            default:
-                global.console.error("Invalid type");
-                return false;
-        }
+        //get calendar detail
+        calendar = getCalendar(option.year, option.month, option.date);
+        //get calendar html
+        calendarHTML = drawCalendarMonthTable(calendar, option);
 
         //draw calendar
-        if (targetedElementBy === "id") {
+        document.getElementById(targetElem).innerHTML = calendarHTML.outerHTML;
 
-            document.getElementById(targetElem).innerHTML = calendarHTML.outerHTML;
+    }
 
-        } else if (targetedElementBy === "class") {
+    // option{
+    //    year,
+    //    month，from 0 to 11
+    //    date,
+    //    ......
+    //}
+    function getData(option) {
+        var 
+            dateObj = new Date(),
+            
+            data 
 
-            elemArr = document.getElementsByClassName(targetElem);
-            for (i = 0, len = elemArr.length; i < len; i = i + 1) {
-                elemArr[i].innerHTML = calendarHTML.outerHTML;
+        if (option.date === dateObj.getDate())
+        {   
+            data = [
+                {
+                    name: "xiaoming",
+                    id: 210,
+                    appointtype: 1,
+                    appointtime: 15,
+                    appointed: true
+                },
+                {
+                    name: "xiaoming",
+                    id: 210,
+                    appointtype: 1,
+                    appointtime: 13,
+                    appointed: true
+                },
+                {
+                    name: "xiaoming",
+                    id: 210,
+                    appointtype: 1,
+                    appointtime: 12,
+                    appointed: true
+                }
+            ]
+        } 
+        else
+        {
+            data = [
+                {
+                    name: "xiaoming",
+                    id: 210,
+                    appointtype: 1,
+                    appointtime: 15,
+                    appointed: true
+                },
+                {
+                    name: "xiaoming",
+                    id: 210,
+                    appointtype: 1,
+                    appointtime: 13,
+                    appointed: true
+                }
+            ]
+        }
+        return data;
+    }
+
+    function updateAppointedUser(option)
+    {
+
+    }
+
+    function createAppointedUser(option) 
+    {
+        var
+            i, ul, li, user, all,
+            property, count, data,
+            length, end = "appoint-all",
+            target =  "dyappoint-user"
+
+        //传递数据
+        data = getData(option);
+        length = data.length;
+
+        user = document.createElement("div");
+
+        for (i = 0, count = 0; i < length; i = i + 1) 
+        {
+            ul = document.createElement("ul");
+            for (property in data[i]) 
+            {
+                li = document.createElement("li");
+                if (property === "appointed") 
+                {
+                    var btn = document.createElement("button");
+                    if (data[i][property] === true) 
+                    {
+                        count += 1;
+                        btn.innerHTML = "已签到";
+                    }
+                    else  btn.innerHTML = "确定";
+                    btn.setAttribute("class", "dst-user-appointed");
+                    li.appendChild(btn);
+                }
+                else li.innerHTML = data[i][property];
+                ul.appendChild(li);
             }
 
+            user.appendChild(ul);
         }
+
+        all = document.createElement("div");
+
+        ul = document.createElement("ul");
+        li = document.createElement("li");
+        li.innerHTML = "预约总人数: " + length;
+        ul.appendChild(li);
+        li = document.createElement("li");
+        li.innerHTML = "剩余座位: " + (1000 - length);
+        ul.appendChild(li);
+        li = document.createElement("li");
+        li.innerHTML = "签到率: " + count / length * 100 + "%";
+        ul.appendChild(li);
+        all.appendChild(ul);
+
+        document.getElementById(target).innerHTML = user.outerHTML;
+        document.getElementById(end).innerHTML = all.outerHTML;
     }
 
     //events
