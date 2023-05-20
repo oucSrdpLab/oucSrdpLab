@@ -1,9 +1,4 @@
-dycalendar.draw({
-  target: '#dycalendar',
-  type: 'month',
-  highlighttargetdate: true,
-  prevnextbutton: 'show'
-})
+dycalendar.draw()
 
 var dycalendar = {
   showReservedTime: function() {
