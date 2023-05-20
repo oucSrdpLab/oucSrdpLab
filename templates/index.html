@@ -12,64 +12,71 @@
     <title>Document</title>
 </head>
 <body>
-    <div class = "header">
-        <div class="logo">
-            <img src="{{url_for('static',filename='image/school_logo.png')}}" alt="school_logo">
+    <div id="shell">
+        <div id = "header" class = "header">
+            <div class="logo">
+                <img src ="image/logo.png" alt="icon">
+            </div>
+            <div class="nav" id = "nav">
+                <a class = "active" href="home.html">HOME</a>
+                <a href="news.html">NEWS</a>
+                <a href="about.html">ABOUT</a>
+            </div> 
         </div>
-        <div class="fac">网页预约展示</div>
-        <div class="search">
-            <input type="text" placeholder="搜一搜">
-            <span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                </svg>
-            </span>
+        <div id="container" class="container">
+            <div class="appoint-response out-response">
+                <div class="appoint-response in-response">
+                    <div class="calendar-ul">
+                        <div class='calendar' id='dycalendar'></div>
+                    </div>
+                    <div class="appoint-ul" >
+                        <div class="appoint-header">
+                            <ul>
+                                <li>名字</li>
+                                <li>学号</li>
+                                <li>预约种类</li>
+                                <li>预约时间</li>
+                                <li>签到</li>
+                            </ul>
+                        </div>
+                        <div class="appoint-user" id = "dyappoint-user">
+                            <!-- <ul class="user" id = "1" onclick = "myfunction()" >
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li><button type="button">确定</button></li>
+                                <li>预约座位数</li>
+                            </ul> -->
+                        </div>
+                        <div class="end" id ="appoint-all">
+                            <!-- <ul>
+                                <li>预约总人数</li>
+                                <li>剩余座位</li>
+                                <li>签到率</li>
+                            </ul> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="container">
-        <div class="left">
-            <div class="_calendar">
-                <div class='calendar' id='dycalendar'></div>
-                <script type='text/javascript' src="{{ url_for('static',filename='JS/calendar.js') }}"></script>
-                <script type='text/javascript' src="{{ url_for('static',filename='JS/script.js') }}"></script>
-            </div>
+    <div class="app">
+        <div class = "code">
+            <img src="./image/icon.jpg">
+            <div class="import">扫描关注微信预约小程序</div>
         </div>
-        <div class="right">
-            <div class="header">
-                <ul>
-                    <li>学号</li>
-                    <li>姓名</li>
-                    <li>时间</li>
-                    <li>操作</li>
-                </ul>
-            </div>
-            <div class="user">
-        <table>
-    <tbody>
-      <tr>
-
-          <table>
-
-            <tbody id="reserved-time">
-
-            </tbody>
-          </table>
-
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-            <div class="end">
-                <ul>
-                    <li>预约总人数</li>
-                    <li>预约</li>
-                    <li>头像</li>
-                    <li>头像</li>
-                    <li>头像</li>
-                </ul>
-            </div>
+        <div class="footer">
+            <div class="footer-title">扬帆信息 驰骋海洋</div>
+            <img src = "image/footlogo.png">
+        </div>
+        <div class="contact">
+            <div class="contact-icon"></div>
+            <div class="contact-inf"></div>
         </div>
     </div>
 </body>
+<script type='text/javascript' src="{{ url_for('static',filename='JS/header.js') }}"></script>
+<script type='text/javascript' src="{{ url_for('static',filename='JS/home.js') }}"></script>
+<script type='text/javascript' src="{{ url_for('static',filename='JS/script.js') }}"></script>
 </html>
