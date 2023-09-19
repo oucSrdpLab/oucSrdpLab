@@ -1,0 +1,218 @@
+body{
+    justify-content: center;
+    align-items: center;
+    /* background:linear-gradient(200deg,#6E9BC5,#D5EBE1); */
+    overflow-y:scroll;
+}::-webkit-scrollbar{display: none;}
+
+#shell{
+    background: linear-gradient(
+        135deg,
+        hsl(170deg, 80%, 70%),
+        hsl(190deg, 80%, 70%),
+        hsl(250deg, 80%, 70%),
+        hsl(320deg, 80%, 70%)
+    );
+
+    .container{
+        position: relative;
+        width: 100%;
+        height: 700px;
+
+        .appoint-response{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .out-response{
+            width: 1226px;
+            height: 644px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.6);
+            /* box-shadow: 0 0 5px 1px #666; */
+
+            .in-response{
+                width: 1202px;
+                height: 620px;
+                border-radius: 15px;
+                background-color: #fff;
+
+                .appoint-ul{
+                    position: relative;
+                    float: left;
+                    width: 750px;
+                    height: 620px;
+                    border-radius: 0px 15px 15px 0;
+                    /* background-color: #FF9999; */
+                    /* background-color: #9999CC; */
+                    background-color: #6699CC;
+
+                    .appoint-header{
+                        height: 50px;
+
+                        & ul{
+                            position: fixed;
+                            height: 50px;
+
+                            & li{
+                                float:left;
+                                width: 150px;
+                                color: #fff;
+                                font-size: 14px;
+                                line-height: 50px;
+                                text-align: center;
+                            }
+                        }
+                    }
+
+                    .appoint-user{
+                        width: 750px;
+                        height: 500px;
+                        overflow-y:scroll;
+
+                        & ul{
+                            border-spacing: 0;
+                            border-collapse: collapse; 
+                            padding: 0;
+                            color: #fff;
+                            width: 750px;
+                            height: 75px;
+                            overflow: hidden;
+
+                            &:hover{
+                                /* background-color: #9999CC; */
+                                background-color: #FF9999;
+                                background-color: #6666CC;
+                                color: #fff;
+                            }
+
+                            & li{
+                                float: left;
+                                width: 150px;
+                                height: 75px;
+                                font-size: 14px;
+                                line-height: 75px;
+                                border-style: none;
+                                list-style: none;
+                                text-align: center;
+
+                                & button{
+                                    width: 100px;
+                                    height: 30px;
+                                    color: #fff;
+                                    /* background-color: #6666CC;
+                                    /* background-color: #FF9999; */
+                                    background-color: #99CC99;
+                                    border-radius: 5px;
+                                    border: 0;
+                                }
+
+                                & input{
+                                    width: 60px;
+                                    height: 20px;
+                                    font-size: 12px;
+                                    line-height: 20px;
+                                    background-color: #fff;
+                                }
+                            }
+                        }
+                    }
+                    ::-webkit-scrollbar{display: none;}
+
+                    .end {
+                        position: absolute;
+                        bottom: 0;
+                        height: 50px;
+                        border-top: 1px solid #fff;
+
+                        & ul{
+                            position: absolute;
+                            width: 750px;
+                            color: #fff;
+
+                            & li{
+                                float: left;
+                                width: 250px;
+                                line-height: 50px;
+                                text-align: center;
+                            }
+                        }
+                    }
+                }
+                
+            }
+        }
+    }
+}
+
+.app{
+    position: relative;
+    width: 100%;
+    height: 300px;
+    background-image: url("../image/footbg.jpg");
+
+    .code{
+        float: left;
+        position: relative;
+        top: 60px;
+        left: 250px;
+        width: 160px;
+        height: 240px;
+
+        & img{
+            position: absolute;
+            top: 30px;
+            width: 120px;
+            height: 120px;
+            /* border-image-source: radial-gradient(60% 60%, transparent 0px, transparent 100%, #fff 100%); */
+            /* border-image-slice: 1; */
+            /* border-width: 1px; */
+            /* border-style: solid;
+            border-image-outset: 12px; */
+        }
+
+        .import{
+            position: absolute;
+            bottom: 60px;
+            width: 160px;
+            height: 30px;
+            font-size: 12px;
+            line-height: 30px;
+            color: #fff;
+        }
+    }
+
+    .footer{
+        float: left;
+        position: absolute;
+        top: 50px;
+        left: 50%;
+        transform: translate(-50%);
+        width: 400px;
+        height: 200px;
+        color: #fff;
+        font-size: 2em;
+        text-align: center;
+        align-items: center;
+
+        .footer-title{
+            margin-top: 40px;
+        }
+
+        & img{
+            margin-top: 20px;
+        }
+    }
+
+    .contact{
+        float: right;
+        position: relative;
+        top: 50px;
+        right: 180px;
+        width: 200px;
+        height: 200px;
+    }
+}
+
