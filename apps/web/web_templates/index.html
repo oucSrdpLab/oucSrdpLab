@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1,user-scalable=no">
+    <link rel='stylesheet' href="{{ url_for('web_bp.static',filename='CSS/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('web_bp.static',filename='CSS/common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('web_bp.static',filename='CSS/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('web_bp.static',filename='CSS/calendar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('web_bp.static',filename='CSS/style.css') }}">
+    <title>Document</title>
+</head>
+<body>
+    <div class = "header">
+        <div class="logo">
+            <img src="{{url_for('web_bp.static',filename='image/school_logo.png')}}" alt="school_logo">
+        </div>
+        <div class="fac">网页预约展示</div>
+        <div class="search">
+            <input type="text" placeholder="搜一搜">
+            <span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                </svg>
+            </span>
+        </div>
+    </div>
+    <div class="container">
+        <div class="left">
+            <div class="_calendar">
+                <div class='calendar' id='dycalendar'></div>
+                <script type='text/javascript' src="{{ url_for('web_bp.static',filename='JS/calendar.js') }}"></script>
+                <script type='text/javascript' src="{{ url_for('web_bp.static',filename='JS/script.js') }}"></script>
+            </div>
+        </div>
+        <div class="right">
+            <div class="header">
+                <ul>
+                    <li>学号</li>
+                    <li>姓名</li>
+                    <li>时间</li>
+                    <li>操作</li>
+                </ul>
+            </div>
+            <div class="user">
+        <table>
+    <tbody>
+      <tr>
+
+          <table>
+
+            <tbody id="reserved-time">
+
+            </tbody>
+          </table>
+
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+            <div class="end">
+                <ul>
+                    <li>预约总人数</li>
+                    <li>预约</li>
+                    <li>头像</li>
+                    <li>头像</li>
+                    <li>头像</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
