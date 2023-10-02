@@ -15,12 +15,13 @@ from web.apps.exts import db
 
 
 @appointment_bp.route("/all", methods=["POST"])
-@login_required
+#@login_required
 def all():
     """根据时间获取用户所有的预约ID、开始时间、结束时间、是否签到、预约人信息"""
     response_data = {"msg": "请选择提供预约的起止时间", "data": []}
 
     form = get_appointment_form()
+
     # GET方式提交的数据，不要用validate_on_submit，用validate
     # `POST', `PUT', `PATCH', 或 `DELETE'，才可以用validate_on_submit
     if form.validate_on_submit():
@@ -28,10 +29,9 @@ def all():
         appointment_list = (
             db.session.query(Appointment)
             .filter(
-                Appointment.user == g.user,
                 Appointment.is_delete == False,
                 # 查询的开始时间小于预约的开始时间, 这里要注意前面是.data，后面不能加.data。这个bug我找了接近一个小时
-                form.start_time.data <= Appointment.start_time,
+                form.start_time.data <= Appointment.end_time,
                 # 查询的结束时间大于预约的结束时间
                 form.end_time.data >= Appointment.end_time,
             )
@@ -50,8 +50,7 @@ def all():
                         "equipment_name": item.equipment.name,
                         "is_sign": item.is_sign,
                         "is_sign_out": item.is_sign_out,
-                        "user_id": item.user.id,
-                        "user_name": item.user.username,
+                        "user_id": item.user_id,
                     }
                 )
         if response_data["data"]:
@@ -66,7 +65,7 @@ def all():
 
 
 @appointment_bp.route("/add", methods=["POST"])
-@login_required
+#@login_required
 def add():
     """创建预约,必须要给出起止时间、用户要先登录
     TODO 查时间校验算法，同一个设备的预约起止时间不能重叠
@@ -76,6 +75,7 @@ def add():
     if form.validate_on_submit():
         # 校验合法，创建预约
         validate_data = form.data
+
 
         appointment = Appointment(**validate_data)
         db.session.add(appointment)
@@ -90,32 +90,34 @@ def add():
     return jsonify(response_data)
 
 
+
 @appointment_bp.route("/delete", methods=["POST"])
-@login_required
+#@login_required
 def delete():
-    """删除预约,必须要先登录, identification 只能是 teacher 才能删除"""
+    """删除预约,必须要先登录"""
     response_data = {"msg": "删除失败"}
-    if g.user.identification == "teacher":
-        # 获取预约id
-        appointment_id = int(request.json.get("appointment_id"))
-        if appointment_id:
-            appointment = Appointment.query.get(appointment_id)
-            if appointment:
-                # 删除
-                appointment.is_delete = True
-                # 保存到数据库
-                db.session.commit()
-                response_data["msg"] = "删除成功"
-            else:
-                response_data["msg"] = "找不到对应的预约"
+    # 获取预约id
+    appointment_id = request.json.get('appointment_id')
+    if appointment_id:
+        appointment = Appointment.query.get(appointment_id)
+        if appointment:
+            # 直接从数据库中删除
+            db.session.delete(appointment)
+            # 保存到数据库
+            db.session.commit()
+            response_data["msg"] = "删除成功"
+        else:
+            response_data["msg"] = "找不到对应的预约"
     else:
-        response_data["msg"] = "删除失败, 权限不够"
+        response_data["msg"] = "删除失败，缺少预约id"
 
     return jsonify(response_data)
 
 
+
+
 @appointment_bp.route("/edit", methods=["POST"])
-@login_required
+#@login_required
 def edit():
     """编辑预约,必须要先登录，学生只能修改自己，老师可以修改任何人的预约"""
     """可编辑的数据有: start_time、end_time、equipment_id"""
@@ -164,13 +166,14 @@ def edit():
 
 
 @appointment_bp.route("/serch_by_user", methods=["POST"])
-@login_required
+#@login_required
 def serch_by_user():
     """查询此user所有的预约，必须要登录"""
 
     response_data = {"msg": "查询成功", "data": []}
+    user_id = request.json.get('user_id')
     all_appointment_list = Appointment.query.filter_by(
-        user_id=g.user.id, is_delete=False
+        user_id=user_id, is_delete=False
     ).all()
 
     for item in all_appointment_list:
@@ -186,7 +189,10 @@ def serch_by_user():
             }
         )
 
+
     return jsonify(response_data)
+
+
 
 
 @appointment_bp.route("/serch_by_equipment", methods=["POST"])

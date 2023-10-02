@@ -19,45 +19,37 @@ class register_form(FlaskForm):
         ],
     )
 
-    # 密码不一定需要，可能是验证码注册
     password = PasswordField(
         "password",
         validators=[
-            DataRequired(
-                "密码不能为空",
-            ),
+            DataRequired("密码不能为空"),
             Length(max=256, message="密码长度不能超过256位"),
-            EqualTo("confirm_password", message="密码不一样"),
         ],
     )
-    confirm_password = PasswordField(
-        "confirm_password",
+
+    phone = StringField(
+        "phone",
         validators=[
-            DataRequired("确认密码不能为空"),
-            Length(max=256, message="确认密码长度不能超过256位"),
+            DataRequired("手机号不能为空"),
+            Length(max=11, message="手机号长度不能超过11位"),
+
         ],
     )
-    # 验证码不一定需要，可能是账号和密码注册
+
     code = StringField("code", validators=[Length(max=6, message="验证码长度为6位")])
     identification = StringField("identification")
 
     def validate_username(self, field):
-        """局部钩子,前面的validate是标识写法,后面的username是检验的字段名"""
-        """检验用户名,并判断用户输入的账号类型"""
         if re.match(r"^1[3-9][0-9]{9}$", field.data):
-            # 如果输入的是一个11位的手机号，且首位是1，第二位是3-9，则认为是手机号
             input_type = "phone"
         elif re.match(r"^.+@.+$", field.data):
-            # 如果输入的是一个带有@符号的字符串，则认为是邮箱
             input_type = "email"
         else:
-            # 否则认为是用户名
             input_type = "username"
         type_data = {input_type: field.data}
         self._my_type_data = type_data
         user = User.query.filter_by(**type_data).first()
         if user:
-            # 如果存在用户，就不允许注册，抛出异常
             raise ValidationError("用户已存在")
 
 
@@ -101,26 +93,27 @@ class login_form(FlaskForm):
     def validate_username(self, field):
         """局部钩子,前面的validate是标识写法,后面的username是检验的字段名"""
         """检验用户名,并判断用户输入的账号类型"""
-        if re.match(r"^1[3-9][0-9]{9}$", field.data):
-            # 如果输入的是一个11位的手机号，且首位是1，第二位是3-9，则认为是手机号
-            input_type = "phone"
-        elif re.match(r"^.+@.+$", field.data):
-            # 如果输入的是一个带有@符号的字符串，则认为是邮箱
-            input_type = "email"
-        else:
-            # 否则认为是用户名
-            input_type = "username"
+        # if re.match(r"^1[3-9][0-9]{9}$", field.data):
+        #     # 如果输入的是一个11位的手机号，且首位是1，第二位是3-9，则认为是手机号
+        #     input_type = "phone"
+        # elif re.match(r"^.+@.+$", field.data):
+        #     # 如果输入的是一个带有@符号的字符串，则认为是邮箱
+        #     input_type = "email"
+        # else:
+        #     # 否则认为是用户名
+        #     input_type = "username"
+        input_type = "phone"
         type_data = {input_type: field.data}
 
         user = User.query.filter_by(**type_data).first()
         if not user:
             # 如果不存在用户，就不允许登录，抛出异常
-            raise ValidationError("账号或密码错误")
+            raise ValidationError("账号或密码错误1")
         elif self.data["password"]:
             # 有密码字段，就检查密码，没密码就不管
-            if not check_password_hash(user.password, self.password.data):
+            if user.password != self.password.data:
                 # 检查密码不对
-                raise ValidationError("账号或密码错误")
+                raise ValidationError("账号或密码错误，用户名：{}，密码：{}".format(user.password, self.password.data))
             else:
                 # 密码也对啦
                 self._my_user = user

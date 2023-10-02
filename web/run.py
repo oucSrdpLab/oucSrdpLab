@@ -7,4 +7,4 @@ import os
 
 
 if __name__ == "__main__":
-    app.run(config.HOST, config.PORT)
+    app.run("0.0.0.0", 5000)

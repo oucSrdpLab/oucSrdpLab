@@ -25,36 +25,8 @@ ttf_file_path = os.path.join(current_path, "static", "ttf", "ziti.ttf")
 
 
 
-def create_app():
-    global app
-    app = Flask(__name__)
 
-    # 注册蓝图
-    app.register_blueprint(user_bp, url_prefix="/user")
-
-
-    # 获取当前views.py路径，然后将当前目录下static/ttf里面的字体加入进来
-    @app.before_request
-    def load_user():
-        """根据session中的user_id加载user，因为后面的操作都需要user，所以需要让他在每次请求前就执行这个函数"""
-        # 从session中获取user_id
-        user_id = session.get("user_id")
-
-        if user_id:
-            # 如果有user_id，那么就去数据库查找对应的user
-            user = User.query.get(user_id)
-            if user:
-                g.user = user
-            else:
-                # 这个user_id不在数据库里面，就把g中的user销毁
-                g.user = None
-        else:
-            g.user = None
-
-    return app
-
-app = create_app()
-@app.route("/login", methods=["POST"])
+@user_bp.route("/login", methods=["POST"])
 def login():
     """用户登录, 访问链接是/user/login，只能POST"""
     form = login_form()
@@ -81,7 +53,7 @@ def login():
     return jsonify(response_data)
 
 
-@app.route("/register", methods=["POST"])
+@user_bp.route("/register", methods=["POST"])
 def register():
     """用户注册, 访问链接是/user/register，只能POST"""
     """小bug，不管是调用了注册接口还是登录接口，这里都需要先把session清空"""
@@ -94,9 +66,9 @@ def register():
         # 验证通过了，就在从form取出在校验字段
         validate_data = form.data
         validate_data.pop("code")  # 删除验证码
-        validate_data.pop("confirm_password")  # 删除确认密码
+        validate_data["phone"] = form.phone.data
 
-        validate_data["password"] = generate_password_hash(form.password.data)
+        #validate_data["password"] = generate_password_hash(form.password.data)
 
         validate_data.update(form._my_type_data)
 
@@ -122,14 +94,15 @@ def register():
     return jsonify(response_data)
 
 
-@app.route("/login_out", methods=["GET"])
+
+@user_bp.route("/login_out", methods=["GET"])
 def login_out():
     """退出登录"""
     session.clear()
     return jsonify({"msg": "退出登录"})
 
 
-@app.route("/get_image_code", methods=["GET"])
+@user_bp.route("/get_image_code", methods=["GET"])
 def get_image_code():
     "获取图片验证码"
     # 设置图片模式。大小，颜色
@@ -165,7 +138,7 @@ def get_image_code():
     return response
 
 
-@app.route("/send_code_by_email", methods=["POST"])
+@user_bp.route("/send_code_by_email", methods=["POST"])
 def send_code_by_email():
     """'用邮箱发送验证码"""
     response_data = {"msg": "发送失败"}
@@ -195,7 +168,7 @@ def send_code_by_email():
         return jsonify(response_data)
 
 
-@app.route("/reset_password", methods=["POST"])
+@user_bp.route("/reset_password", methods=["POST"])
 def reset_password():
     """找回密码（未登录的情况）"""
     response_data = {"msg": "密码找回失败"}
@@ -212,7 +185,7 @@ def reset_password():
     return response_data
 
 
-@app.route("/change_password", methods=["POST"])
+@user_bp.route("/change_password", methods=["POST"])
 @login_required
 def change_password():
     """修改密码（已登录的情况）"""
@@ -230,7 +203,7 @@ def change_password():
     return response_data
 
 
-@app.route("/change_userinfo", methods=["POST"])
+@user_bp.route("/change_userinfo", methods=["POST"])
 @login_required
 def change_userinfo():
     """修改用户信息（已登录的情况）"""
@@ -264,9 +237,3 @@ def change_userinfo():
 
     return jsonify(response_data)
 
-
-# 应用工厂函数
-
-
-if __name__ == "__main__":
-    app.run()

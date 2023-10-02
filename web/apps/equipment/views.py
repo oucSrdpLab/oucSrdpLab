@@ -18,7 +18,7 @@ def all():
         # 在数据库查到了设备，才提取名字
         for equipment in equipments_obj:
             # 设备是未删除，并且没有使用，才可以去提取返回数据
-            if not equipment.is_delete and not equipment.is_used:
+            if equipment.is_delete and not equipment.is_used:
                 equipments_list.append(
                     {
                         "id": equipment.id,
@@ -42,15 +42,12 @@ def all():
 
 
 @equipment_bp.route("/add", methods=["POST"])
-@login_required
+#@login_required
 def add():
     """添加一个设备，必须要登录，且只有老师才能添加"""
 
     response_data = {"msg": "添加失败"}
-    if g.user.identification == "student":
-        # 先校验身份，只有老师才可以增加设备
-        response_data["msg"] = "%s无权增加设备" % g.user.identification
-        return response_data
+
 
     form = add_equipment_form()
     if form.validate_on_submit():
@@ -70,25 +67,17 @@ def add():
 
 
 @equipment_bp.route("/delete", methods=["POST"])
-@login_required
+#@login_required
 def delete():
     """删除一个设备，必须要登录，且只有老师才能删除"""
 
     response_data = {"msg": "删除失败"}
-    if g.user.identification == "student":
-        # 先校验身份，只有老师才可以删除设备
-        response_data["msg"] = "%s无权删除设备" % g.user.identification
-        return response_data
 
     form = delete_equipment_form()
     if form.validate_on_submit():
-        # 通过form校验，从数据库获取，然后就is_delete字段修改为False
         equipment = Equipment.query.get(form.equipment_id.data)
-        if equipment and not equipment.is_delete:
-            # 如果根据ID确实查到了这个设备，并且这个设备没有删除，才执行删除
-            equipment.is_delete = True
-            equipment.name = "delete_equipment_%s_" % equipment.id + equipment.name
-            equipment.is_used = False
+        if equipment and equipment.is_delete:
+            db.session.delete(equipment)
             db.session.commit()
             response_data["msg"] = "成功删除设备, 设备名: %s " % equipment.name
         else:
@@ -100,7 +89,7 @@ def delete():
 
 
 @equipment_bp.route("/edit", methods=["POST"])
-@login_required
+#@login_required
 def edit():
     """修改设备信息，必须要登录，且只有老师才能修改
     可修改：设备名、型号、种类、说明书、设备剩余情况、设备是否删除

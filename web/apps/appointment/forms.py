@@ -7,29 +7,31 @@ from ..equipment.models import Equipment
 from flask import g
 
 
+from datetime import datetime
+
 class add_appointment_form(FlaskForm):
     """创建预约的表单验证"""
 
-    # start_time需要使用DateTime
-    start_time = DateTimeField(
-        "start_time",
-        validators=[
-            DataRequired("开始时间不能为空"),
-        ],
-    )
-    end_time = DateTimeField(
-        "end_time",
-        validators=[
-            DataRequired("结束时间不能为空"),
-        ],
-    )
+    def validate_start_time(self, field):
+        """检查开始时间是否有效"""
+        if field.data and isinstance(field.data, datetime):
+            field.data = field.data.replace(second=0)  # 将秒数置为0
+        # else:
+        #     raise ValidationError("开始时间不正确")
+
+    def validate_end_time(self, field):
+        """检查结束时间是否有效"""
+        if field.data and isinstance(field.data, datetime):
+            field.data = field.data.replace(second=0)  # 将秒数置为0
+        # else:
+        #     raise ValidationError("结束时间不正确")
+
+    start_time = StringField("start_time", validators=[DataRequired("开始时间不能为空"), validate_start_time])
+    end_time = StringField("end_time", validators=[DataRequired("结束时间不能为空"), validate_end_time])
     equipment_id = StringField("equipment_id", validators=[DataRequired("预约器材ID不能为空")])
     user_id = StringField("user_id", validators=[DataRequired("预约ID不能为空")])
 
-    def validate_user_id(self, field):
-        """检查是不是本人在操作"""
-        if g.user.id != field.data:
-            raise ValidationError("user_id错误")
+
 
     def validate_equipment_id(self, field):
         """检查器材ID是否正确"""
@@ -38,9 +40,10 @@ class add_appointment_form(FlaskForm):
             raise ValidationError("equipment_id错误")
 
     def validate_end_time(self, field):
-        """end_time要大于start_time，如果 field.data <= self.start_time.data 就是一个无效的预约"""
+        """检查是否大于start_time"""
         if field.data <= self.start_time.data:
-            raise ValidationError("start_time大于了end_time")
+            raise ValidationError("开始时间大于了结束时间")
+
 
 
 class get_appointment_form(FlaskForm):

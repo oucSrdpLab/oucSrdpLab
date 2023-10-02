@@ -1,53 +1,124 @@
-dycalendar.draw()
-
 var dycalendar = {
   showReservedTime: function() {
-  const requestOptions = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({op: 2})
-  };
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    print("debug",formatDateTime(today))
+    const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
 
-  const now = new Date().getTime();
+    // 格式化日期时间为 "YYYY-MM-DD HH:mm:ss" 格式
+    function formatDateTime(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
 
-  fetch('http://192.168.15.135:5000/database/orders', requestOptions)
-    .then(response => response.json())
-    .then(data => {
-      const reservedTime = data
-        .filter(order => Number(order.untilTime) > now && (order.orderStatus === "1"||order.orderStatus === "已签到"))
-        .map(order => ({
-          _id: order._id,
-          startTime: new Date(Number(order.startTime)).toLocaleString(),
-          endTime: new Date(Number(order.untilTime)).toLocaleString(),
-          applicantName: order.applicantName,
-          applicantIDNumber: order.applicantIDNumber
-        }));
-      const timeList = document.querySelector('#reserved-time');
-      const tr = document.createElement('tr');
-      const img = document.createElement('img');
-      img.src = 'static/image/pro_img.png';
-      tr.innerHTML = `
-        <td>
-          <table>
-            <tbody>
-              ${reservedTime.map(start => `
-                <tr>
-                  <td>${start.startTime} - ${start.endTime}</td>
-                  
-                </tr>
-                <tr><td>姓名：${start.applicantName}学号：${start.applicantIDNumber}</td></tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </td>
-        <td><button type="button" onclick="handleSignIn(2)">签到</button></td>
-      `;
-      timeList.appendChild(tr);
-    })
-    .catch(error => console.error(error));
-},
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
+
+    function formatDateTime1(dateString) {
+        const dateTimeParts = dateString.split(' ');
+        const datePart = dateTimeParts[0];
+        const timePart = dateTimeParts[1].split(':');
+
+        const [year, month, day] = datePart.split('/');
+        const hours = String(timePart[0]).padStart(2, '0');
+        const minutes = String(timePart[1]).padStart(2, '0');
+
+        return `${month}-${day} ${hours}:${minutes}`;
+    }
 
 
+    const requestBody = {
+      start_time: formatDateTime(today),
+      end_time: formatDateTime(endOfDay)
+    };
+
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestBody)
+    };
+
+    fetch('http://192.168.15.135:5000/appointment/all', requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        const reservedTime = data.data
+          .filter(order => new Date(order.end_time) <= endOfDay )
+          .map(order => ({
+            start_time: new Date(order.start_time).toLocaleString(),
+            end_time: new Date(order.end_time).toLocaleString(),
+            equipment_name: order.equipment_name,
+            appointment_id:order.id,
+            is_sign:order.is_sign,
+          }));
+        console.log("debug2",reservedTime)
+        const timeList = document.querySelector('#reserved-time');
+
+        reservedTime.forEach(order => {
+            const tr = document.createElement('tr');
+
+            const equipmentNameTd = document.createElement('td');
+            equipmentNameTd.textContent = order.equipment_name;
+            tr.appendChild(equipmentNameTd);
+
+            const startTimeTd = document.createElement('td');
+            startTimeTd.textContent = formatDateTime1(order.start_time);
+            tr.appendChild(startTimeTd);
+
+            const space = document.createElement('td');
+            space.textContent = "--";
+            tr.appendChild(space);
+
+            const endTimeTd = document.createElement('td');
+            endTimeTd.textContent = formatDateTime1(order.end_time);
+            tr.appendChild(endTimeTd);
+
+            const signInTd = document.createElement('td');
+            const signInButton = document.createElement('button');
+            if (order.is_sign) { // 如果已签到
+                signInButton.textContent = '已签到';
+                signInButton.disabled = true; // 禁用点击事件
+            } else {
+                signInButton.textContent = '签到';
+                signInButton.setAttribute('data-appointment-id', order.appointment_id);
+                signInButton.addEventListener('click', () => {
+                    // 处理签到逻辑
+                   dycalendar.handleSignIn(order); // 修改这里
+                });
+            }
+            signInTd.appendChild(signInButton);
+            tr.appendChild(signInTd);
+
+            timeList.appendChild(tr);
+        });
+
+
+      })
+      .catch(error => console.error(error));
+  },
+
+      handleSignIn: function(order) {
+        const requestBody = {
+          appointment_id: order.appointment_id
+        };
+
+        const requestOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestBody)
+        };
+
+        fetch('http://192.168.15.135:5000/sign/signature', requestOptions)
+          .then(response => response.json())
+          .then(data => {
+            console.log(data);
+            location.reload();
+            alert(`签到成功！`);
+          })
+          .catch(error => console.error(error));
+      },
 
   init: function() {
     window.onload = function() {
@@ -55,31 +126,5 @@ var dycalendar = {
     };
   }
 };
-
-// document.addEventListener('DOMContentLoaded', function() {
-//   const btnSignIn = document.querySelector('button[type="button"]');
-//
-//   btnSignIn.addEventListener('click', function() {
-//     handleSignIn(2);
-//   });
-// });
-//
-// function handleSignIn(itemId) {
-//   const requestOptions = {
-//     method: 'POST',
-//     headers: { 'Content-Type': 'application/json' },
-//     body: JSON.stringify({ id: 3, op: 4 ,orderStatus:"已签到"})
-//   };
-//
-//   fetch('http://192.168.15.135:5000/database/orders', requestOptions)
-//     .then(response => response.json())
-//     .then(data => {
-//       console.log('签到成功', data);
-//       // 如果需要刷新预订列表可在此处调用 showReservedTime 函数进行刷新。
-//       const signInButton = document.querySelector(`button[onclick="handleSignIn('${itemId}')"`);
-//       signInButton.textContent = '已签到';
-//     })
-//     .catch(error => console.error(error));
-// }
 
 dycalendar.init();

@@ -43,6 +43,7 @@
             ddd: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
         };
 
+
     /**
      * this function will create month table.
      *
@@ -453,7 +454,6 @@
     }
 
     //------------------------------ dycalendar.draw() ----------------------
-
     /**
      * this function will draw the calendar based on user preferences.
      *
@@ -474,7 +474,7 @@
      * @return boolean          true if success, false otherwise
      */
     dycalendar.draw = function (option) {
-
+        console.log("debug1")
         //check if option is passed or not
         if (typeof option === "undefined") {
             global.console.error("Option missing");
@@ -507,7 +507,6 @@
     };
 
     //------------------------------ dycalendar.draw() ends here ------------
-
     /**
      * this function will draw the calendar inside the target container.
      */
@@ -531,6 +530,7 @@
         }
         targetElem = option.target.substring(1);
 
+        console.log("debug")
         //get calendar HTML
         switch (option.type) {
             case "day":
@@ -566,6 +566,28 @@
 
         }
     }
+
+    var defaults = {
+        type: "day",
+        month: new Date().getMonth(), // 将month设置为当前月份
+        year: new Date().getFullYear(),
+        date: new Date().getDate(),  // 将date设置为当前日期
+        monthformat: "full",
+        dayformat: "full",
+        highlighttoday: false,
+        highlighttargetdate: false,
+        prevnextbutton: "hide"
+    };
+
+    dycalendar.draw({
+    target: '#dycalendar',
+    type: 'month',
+    monthformat: 'mmm',
+    dayformat: 'ddd',
+    highlighttoday: true,
+    highlighttargetdate: true,
+    prevnextbutton: 'show'
+});
 
     //events
     onClick();

@@ -61,3 +61,15 @@ body{
     width: 16px;
     height: 16px;
 }
+
+.container {
+  display: flex;
+}
+
+.left {
+  flex: 1;
+}
+
+.right {
+  flex: 1;
+}

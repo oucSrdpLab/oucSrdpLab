@@ -1,13 +1,13 @@
 from datetime import datetime
-from flask import g, jsonify, request
+from flask import jsonify, request
+
 from ..appointment.models import Appointment
-from web.my_utils import login_required, timeStr_to_dataTime
+from web.my_utils import timeStr_to_dataTime
 from . import sign_bp
 from web.apps.exts import db
 
 
 @sign_bp.route("/signature", methods=["POST"])
-@login_required
 def signature():
     """学生签到，必须要登录
     学生根据预约信息进行签到，需要appointment_id、需要登陆
@@ -18,29 +18,21 @@ def signature():
     appointment_id = request.json.get("appointment_id")
     if appointment_id:
         appointment = Appointment.query.get(int(appointment_id))
-        # 有预约ID，去检查预约人和登录用户是不是同一个人
-        if g.user == appointment.user:
+        # 限制签到最晚时间不能超过预约的结束时间
+        if appointment.end_time >= datetime.now():
+            # 还没有到结束时间，进行签到
+            appointment.is_sign = True
+            db.session.commit()
 
-            # 限制签到最晚时间不能超过预约的结束时间
-            if appointment.end_time >= datetime.now():
-                # 还没有到结束时间，进行签到
-                appointment.is_sign = True
-                # 将预约的设备置为有人使用
-                appointment.equipment.is_used = True
-                db.session.commit()
-
-                response_data["msg"] = "签到成功"
-            else:
-                response_data["msg"] = "签到失败。你错过了签到时间，联系老师进行补签"
+            response_data["msg"] = "签到成功"
         else:
-            response_data["msg"] = "签到失败，预约人不是你"
+            response_data["msg"] = "签到失败。你错过了签到时间，联系老师进行补签"
     else:
         response_data["msg"] = "需要提供appointment_id字段"
     return jsonify(response_data)
 
 
 @sign_bp.route("/supplementary_signature", methods=["POST"])
-@login_required
 def supplementary_signature():
     """补签，必须要登录，且只有老师才能补签
     教师帮学生补签，需要appointment_ID、登录身份为teacher才可以补签
@@ -49,8 +41,9 @@ def supplementary_signature():
     response_data = {"msg": "签到失败"}
 
     appointment_id = request.json.get("appointment_id")
-    if appointment_id and g.user.identification == "teacher":
-        # 有appointment_id字段，且登陆者的身份是教师
+    identification = request.json.get("identification")
+    if appointment_id and identification == "teacher":
+        # 有appointment_id字段，且身份是教师
         appointment = Appointment.query.get(int(appointment_id))
         # 进行签到
         appointment.is_sign = True
@@ -58,7 +51,7 @@ def supplementary_signature():
         appointment.equipment.is_used = True
         db.session.commit()
         # 返回签到结果
-        response_data["msg"] = "对 %s 补签成功" % appointment.user.username
+        response_data["msg"] = "补签成功"
     else:
         response_data["msg"] = "签到失败，请检查appointment_id和identification"
 
@@ -66,7 +59,6 @@ def supplementary_signature():
 
 
 @sign_bp.route("/sign_out", methods=["POST"])
-@login_required
 def sign_out():
     """签退，需要appointment_ID、必须要登录
     签退应该是在预约结束之后，且已经签到的学生才能够签退,
@@ -77,30 +69,25 @@ def sign_out():
     appointment_id = request.json.get("appointment_id")
     if appointment_id:
         appointment = Appointment.query.get(int(appointment_id))
-        # 有预约ID，去检查预约人和登录用户是不是同一个人
-        if g.user == appointment.user:
-            # 这里限制签到最晚时间不能超过预约的结束时间
-            if appointment.end_time <= datetime.now():
-                if appointment.is_sign:
-                    # 预约的结束时间到了，且进行了签到，进行签退
-                    appointment.is_sign_out = True
-                    # 将预约的设备归还,需要通过预约查预约设备
-                    appointment.equipment.is_used = False
-                    db.session.commit()
-                    response_data["msg"] = "签退成功，预约设备已归还"
-                else:
-                    response_data["msg"] = "签退失败，未签到的用户不能签退，需要找老师进行补签到和补签退"
+        # 这里限制签到最晚时间不能超过预约的结束时间
+        if appointment.end_time <= datetime.now():
+            if appointment.is_sign:
+                # 预约的结束时间到了，且进行了签到，进行签退
+                appointment.is_sign_out = True
+                # 将预约的设备归还,需要通过预约查预约设备
+                appointment.equipment.is_used = False
+                db.session.commit()
+                response_data["msg"] = "签退成功，预约设备已归还"
             else:
-                response_data["msg"] = "签退失败，还没有到签退时间"
+                response_data["msg"] = "签退失败，未签到的用户不能签退，需要找老师进行补签到和补签退"
         else:
-            response_data["msg"] = "签退失败，当前用户%s非本次预约人" % g.user.username
+            response_data["msg"] = "签退失败，还没有到签退时间"
     else:
         response_data["msg"] = "签退失败，需要提供appointment_id字段"
     return jsonify(response_data)
 
 
 @sign_bp.route("/supplementary_sign_out", methods=["POST"])
-@login_required
 def supplementary_sign_out():
     """补签退，需要appointment_ID、必须要登录才可以操作，且登陆者的身份是teacher
     签退完成之后，需要对设备进行归还
@@ -108,8 +95,9 @@ def supplementary_sign_out():
     response_data = {"msg": "签退失败"}
 
     appointment_id = request.json.get("appointment_id")
-    if appointment_id and g.user.identification == "teacher":
-        # 有appointment_id字段，且登陆者的身份是教师
+    identification = request.json.get("identification")
+    if appointment_id and identification == "teacher":
+        # 有appointment_id字段，且身份是教师
         appointment = Appointment.query.get(int(appointment_id))
         # 进行签到
         appointment.is_sign = True
@@ -119,7 +107,7 @@ def supplementary_sign_out():
         appointment.equipment.is_used = False
         db.session.commit()
         # 返回签退结果
-        response_data["msg"] = "对 %s 补签退成功" % appointment.user.username
+        response_data["msg"] = "补签退成功"
     else:
         response_data["msg"] = "签退失败，请检查appointment_id和identification"
 

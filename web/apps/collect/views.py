@@ -10,7 +10,7 @@ from . import collect_bp
 
 
 @collect_bp.route("/all_award", methods=["get"])
-@login_required
+#@login_required
 def all_award():
     """获取用户所有的奖项名称、获得日期、获奖人信息、颁奖机构、获奖等级"""
     response_data = {"msg": "获取成功", "data": []}
@@ -33,7 +33,7 @@ def all_award():
 
 
 @collect_bp.route("/commit", methods=["POST"])
-@login_required
+#@login_required
 def commit():
     """提交获奖信息"""
     response_data = {"msg": "提交获奖信息"}
