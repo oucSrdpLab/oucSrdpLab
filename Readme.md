@@ -23,3 +23,11 @@ SSH 用户名：root 或 itstudio（itstudio 用户有 sudo 权限，建议非�
 SSH 密码：Publicitstudio   
 如需另外的端口开放，请联系我们  
 **注:如果需要新开端口的话，无法使用iptables直接打开（因为分配的是一个虚拟机，外面仍有一层防火墙），可以跟我说**
+
+
+
+# Tips
+
+1. equipment/views.py第160行的base_url改为服务器ip和端口（我在windows虚拟机是用IIS web服务使外部访问获取图片资源的，linux上**可能**要继续用tomcat，图片地址放在web/static/uploads下）
+2. 我在linux服务器下，自己试过`flask run`并不能直接运行，会报**代码错误**（看看能不能解决，不能解决及时反馈一下，因为我测试用的是windows系统的pycharm直接跑的）
+

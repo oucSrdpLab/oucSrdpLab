@@ -80,7 +80,6 @@ def add():
         # 校验合法，创建预约
         validate_data = form.data
 
-
         appointment = Appointment(**validate_data)
         db.session.add(appointment)
         db.session.commit()
