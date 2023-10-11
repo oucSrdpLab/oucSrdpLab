@@ -1,9 +1,11 @@
+import base64
+import os
+from flask import request, jsonify, current_app, url_for
+from werkzeug.utils import secure_filename
 from .models import Equipment
 from . import equipment_bp
-from flask import jsonify, g
-from .forms import add_equipment_form, delete_equipment_form, edit_equipment_form
+from .forms import AddEquipmentForm, DeleteEquipmentForm, EditEquipmentForm
 from web.my_utils import login_required
-
 from web.apps.exts import db
 
 
@@ -18,18 +20,16 @@ def all():
         # 在数据库查到了设备，才提取名字
         for equipment in equipments_obj:
             # 设备是未删除，并且没有使用，才可以去提取返回数据
-            if equipment.is_delete and not equipment.is_used:
-                equipments_list.append(
-                    {
-                        "id": equipment.id,
-                        "name": equipment.name,
-                        "model": equipment.model,
-                        "kind": equipment.kind,
-                        "instructions": equipment.instructions,
-                        "is_used": equipment.is_used,
-                        "is_delete": equipment.is_delete,
-                    }
-                )
+            equipments_list.append(
+                {
+                    "id": equipment.id,
+                    "name": equipment.name,
+                    "location": equipment.location,
+                    "kind": equipment.kind,
+                    "capacity": equipment.capacity,
+                    "image_url": equipment.image_url,
+                }
+            )
 
     if equipments_list:
         response_data["msg"] = "获取成功"
@@ -42,14 +42,13 @@ def all():
 
 
 @equipment_bp.route("/add", methods=["POST"])
-#@login_required
+# @login_required
 def add():
     """添加一个设备，必须要登录，且只有老师才能添加"""
 
     response_data = {"msg": "添加失败"}
 
-
-    form = add_equipment_form()
+    form = AddEquipmentForm()
     if form.validate_on_submit():
         # 通过form校验，存数据库
         equipment = Equipment(**form.data)
@@ -67,16 +66,16 @@ def add():
 
 
 @equipment_bp.route("/delete", methods=["POST"])
-#@login_required
+# @login_required
 def delete():
     """删除一个设备，必须要登录，且只有老师才能删除"""
 
     response_data = {"msg": "删除失败"}
 
-    form = delete_equipment_form()
+    form = DeleteEquipmentForm()
     if form.validate_on_submit():
         equipment = Equipment.query.get(form.equipment_id.data)
-        if equipment and equipment.is_delete:
+        if equipment:
             db.session.delete(equipment)
             db.session.commit()
             response_data["msg"] = "成功删除设备, 设备名: %s " % equipment.name
@@ -89,19 +88,15 @@ def delete():
 
 
 @equipment_bp.route("/edit", methods=["POST"])
-#@login_required
+# @login_required
 def edit():
     """修改设备信息，必须要登录，且只有老师才能修改
     可修改：设备名、型号、种类、说明书、设备剩余情况、设备是否删除
     """
 
     response_data = {"msg": "修改设备信息失败"}
-    if g.user.identification == "student":
-        # 先校验身份，只有老师才可以删除设备
-        response_data["msg"] = "%s无权修改设备信息" % g.user.identification
-        return response_data
 
-    form = edit_equipment_form()
+    form = EditEquipmentForm()
     if form.validate_on_submit():
         equipment = Equipment.query.get(form.equipment_id.data)
 
@@ -123,11 +118,10 @@ def edit():
                 {
                     "id": equipment.id,
                     "name": equipment.name,
-                    "model": equipment.model,
+                    "location": equipment.location,
                     "kind": equipment.kind,
-                    "instructions": equipment.instructions,
-                    "is_used": equipment.is_used,
-                    "is_delete": equipment.is_delete,
+                    "capacity": equipment.capacity,
+                    "image_url": equipment.image_url,
                 }
             )
 
@@ -136,3 +130,48 @@ def edit():
     else:
         response_data.update(form.errors)
     return jsonify(response_data)
+
+
+@equipment_bp.route("/upload_image", methods=["POST"])
+def upload_image():
+    """接收并保存小程序端发送的image，并返回image_url"""
+
+    response_data = {"msg": "上传失败"}
+
+    # 检查文件是否在请求中
+    if 'image' not in request.files:
+        response_data["msg"] = "未找到上传的图片"
+        return jsonify(response_data)
+
+    image = request.files['image']
+
+    # 检查文件名和文件类型是否合法
+    if image and allowed_file(image.filename):
+        # 为了确保安全，使用secure_filename方法对文件名进行处理
+        filename = secure_filename(image.filename)
+        # 保存文件到指定路径
+        save_path = os.path.join("static", "uploads", filename)
+
+        # 创建目录（如果不存在）
+        os.makedirs(os.path.dirname(save_path), exist_ok=True)
+
+        image.save(save_path)
+
+        base_url = "http://192.168.15.135:28888"
+        # 构建返回的image_url
+        image_url = f"{base_url}/{filename}"
+        response_data["msg"] = "上传成功"
+        response_data["image_url"] = image_url
+
+    else:
+        response_data["msg"] = "文件格式不支持或文件名非法"
+
+    return jsonify(response_data)
+
+
+
+def allowed_file(filename):
+    """检查文件扩展名是否支持"""
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS

@@ -51,76 +51,84 @@
      * @param object option this is the settings object
      * @return html
      */
-    function createMonthTable(data, option) {
+function createMonthTable(data, option) {
+    var table, tr, td, r, c, count;
 
-        var
-            table, tr, td,
-            r, c, count;
+    table = document.createElement("table");
+    tr = document.createElement("tr");
 
-        table = document.createElement("table");
-        tr = document.createElement("tr");
+    // create 1st row for the day letters
+    for (c = 0; c <= 6; c = c + 1) {
+        td = document.createElement("td");
+        td.innerHTML = "SMTWTFS"[c];
+        tr.appendChild(td);
+    }
+    table.appendChild(tr);
 
-        //create 1st row for the day letters
-        for (c = 0; c <= 6; c = c + 1) {
-            td = document.createElement("td");
-            td.innerHTML = "SMTWTFS"[c];
-            tr.appendChild(td);
+    // create 2nd row for dates
+    tr = document.createElement("tr");
+
+    // blank td
+    for (c = 0; c <= 6; c = c + 1) {
+        if (c === data.firstDayIndex) {
+            break;
         }
-        table.appendChild(tr);
+        td = document.createElement("td");
+        tr.appendChild(td);
+    }
 
-        //create 2nd row for dates
+    // remaining td of dates for the 2nd row
+    count = 1;
+    while (c <= 6) {
+        td = document.createElement("td");
+        td.innerHTML = count;
+        if (data.today.date === count && data.today.monthIndex === data.monthIndex && option.highlighttoday === true) {
+            td.setAttribute("class", "dycalendar-today-date");
+        }
+        if (option.date === count && option.month === data.monthIndex && option.highlighttargetdate === true) {
+            td.setAttribute("class", "dycalendar-target-date");
+        } else {
+            td.setAttribute("class", "dycalendar-normal-date"); // 添加普通日期的类名\
+            td.setAttribute("data-month", data.monthIndex); // 添加月份的值
+            td.setAttribute("data-year", data.year); // 添加年份的值
+            td.setAttribute("data-option", JSON.stringify(option));
+        }
+        tr.appendChild(td);
+        count = count + 1;
+        c = c + 1;
+    }
+    table.appendChild(tr);
+
+    // create remaining rows
+    for (r = 3; r <= 7; r = r + 1) {
         tr = document.createElement("tr");
-
-        //blank td
         for (c = 0; c <= 6; c = c + 1) {
-            if (c === data.firstDayIndex) {
-                break;
+            if (count > data.totaldays) {
+                table.appendChild(tr);
+                return table;
             }
-            td = document.createElement("td");
-            tr.appendChild(td);
-        }
-
-        //remaing td of dates for the 2nd row
-        count = 1;
-        while (c <= 6) {
-            td = document.createElement("td");
+            td = document.createElement('td');
             td.innerHTML = count;
             if (data.today.date === count && data.today.monthIndex === data.monthIndex && option.highlighttoday === true) {
                 td.setAttribute("class", "dycalendar-today-date");
             }
             if (option.date === count && option.month === data.monthIndex && option.highlighttargetdate === true) {
                 td.setAttribute("class", "dycalendar-target-date");
+            } else {
+                td.setAttribute("class", "dycalendar-normal-date"); // 添加普通日期的类名
+                td.setAttribute("data-month", data.monthIndex); // 添加月份的值
+                td.setAttribute("data-year", data.year); // 添加年份的值
+                td.setAttribute("data-option", JSON.stringify(option));
             }
-            tr.appendChild(td);
             count = count + 1;
-            c = c + 1;
+            tr.appendChild(td);
         }
         table.appendChild(tr);
-
-        //create remaining rows
-        for (r = 3; r <= 7; r = r + 1) {
-            tr = document.createElement("tr");
-            for (c = 0; c <= 6; c = c + 1) {
-                if (count > data.totaldays) {
-                    table.appendChild(tr);
-                    return table;
-                }
-                td = document.createElement('td');
-                td.innerHTML = count;
-                if (data.today.date === count && data.today.monthIndex === data.monthIndex && option.highlighttoday === true) {
-                    td.setAttribute("class", "dycalendar-today-date");
-                }
-                if (option.date === count && option.month === data.monthIndex && option.highlighttargetdate === true) {
-                    td.setAttribute("class", "dycalendar-target-date");
-                }
-                count = count + 1;
-                tr.appendChild(td);
-            }
-            table.appendChild(tr);
-        }
-
-        return table;
     }
+
+    return table;
+}
+
 
     /**
      * this function will draw Calendar Month Table
@@ -394,7 +402,6 @@
      * this function will handle the on click event.
      */
     function onClick() {
-
         document.body.onclick = function (e) {
 
             //get event object (window.event for IE compatibility)
@@ -447,8 +454,22 @@
                 option.date = dateObj.getDate();
                 option.month = dateObj.getMonth();
                 option.year = dateObj.getFullYear();
-
                 drawCalendar(option);
+            }
+
+            //normal date click
+            //extra checks to make sure object exists and contains the class of interest
+            if ((targetDomObject) && (targetDomObject.classList) && (targetDomObject.classList.contains("dycalendar-normal-date"))) {
+                let date = parseInt(targetDomObject.innerHTML); // 获取日期的值
+                const selectedMonth = parseInt(targetDomObject.getAttribute("data-month")); // 获取月份的值
+                const selectedYear = parseInt(targetDomObject.getAttribute("data-year")); // 获取年份的值
+                option = JSON.parse(targetDomObject.getAttribute("data-option"));
+                option.date = date;
+                option.month = selectedMonth;
+                option.year = selectedYear;
+                global.now = new Date(selectedYear, selectedMonth, date);
+                drawCalendar(option);
+                global.dycalendar.showReservedTime()
             }
         };
     }
@@ -474,7 +495,6 @@
      * @return boolean          true if success, false otherwise
      */
     dycalendar.draw = function (option) {
-        console.log("debug1")
         //check if option is passed or not
         if (typeof option === "undefined") {
             global.console.error("Option missing");
@@ -529,8 +549,6 @@
             targetedElementBy = "class";
         }
         targetElem = option.target.substring(1);
-
-        console.log("debug")
         //get calendar HTML
         switch (option.type) {
             case "day":
@@ -567,18 +585,6 @@
         }
     }
 
-    var defaults = {
-        type: "day",
-        month: new Date().getMonth(), // 将month设置为当前月份
-        year: new Date().getFullYear(),
-        date: new Date().getDate(),  // 将date设置为当前日期
-        monthformat: "full",
-        dayformat: "full",
-        highlighttoday: false,
-        highlighttargetdate: false,
-        prevnextbutton: "hide"
-    };
-
     dycalendar.draw({
     target: '#dycalendar',
     type: 'month',
@@ -594,5 +600,6 @@
 
     //attach to global window object
     global.dycalendar = dycalendar;
+
 
 }(typeof window !== "undefined" ? window : this));

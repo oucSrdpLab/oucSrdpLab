@@ -19,6 +19,7 @@ app = Flask(__name__)
 # 从文件里面加载配置项
 app.config.from_object(config)
 
+app.static_folder = 'static'
 # 注册蓝图
 app.register_blueprint(web_bp)  # 注册web蓝图
 app.register_blueprint(user_bp)  # 注册user蓝图

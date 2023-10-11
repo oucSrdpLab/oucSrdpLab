@@ -1,8 +1,13 @@
+var now = new Date();
+
 var dycalendar = {
   showReservedTime: function() {
-    const now = new Date();
+    // 清空原先的tr
+    const timeList = document.querySelector('#reserved-time');
+    timeList.innerHTML = '';
+
+    //const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    print("debug",formatDateTime(today))
     const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
 
     // 格式化日期时间为 "YYYY-MM-DD HH:mm:ss" 格式
@@ -52,24 +57,24 @@ var dycalendar = {
             equipment_name: order.equipment_name,
             appointment_id:order.id,
             is_sign:order.is_sign,
+            is_checked:order.is_checked,
+            applicant_student_id:order.applicant_student_id,
           }));
-        console.log("debug2",reservedTime)
         const timeList = document.querySelector('#reserved-time');
 
         reservedTime.forEach(order => {
             const tr = document.createElement('tr');
-
             const equipmentNameTd = document.createElement('td');
             equipmentNameTd.textContent = order.equipment_name;
             tr.appendChild(equipmentNameTd);
 
+            const applicantStudentIdTd = document.createElement('td');
+            applicantStudentIdTd.textContent = order.applicant_student_id;
+            tr.appendChild(applicantStudentIdTd);
+
             const startTimeTd = document.createElement('td');
             startTimeTd.textContent = formatDateTime1(order.start_time);
             tr.appendChild(startTimeTd);
-
-            const space = document.createElement('td');
-            space.textContent = "--";
-            tr.appendChild(space);
 
             const endTimeTd = document.createElement('td');
             endTimeTd.textContent = formatDateTime1(order.end_time);
@@ -80,13 +85,16 @@ var dycalendar = {
             if (order.is_sign) { // 如果已签到
                 signInButton.textContent = '已签到';
                 signInButton.disabled = true; // 禁用点击事件
-            } else {
+            } else if(order.is_checked){
                 signInButton.textContent = '签到';
                 signInButton.setAttribute('data-appointment-id', order.appointment_id);
                 signInButton.addEventListener('click', () => {
                     // 处理签到逻辑
                    dycalendar.handleSignIn(order); // 修改这里
                 });
+            }else{
+                signInButton.textContent = '未审核';
+                signInButton.disabled = true; // 禁用点击事件
             }
             signInTd.appendChild(signInButton);
             tr.appendChild(signInTd);
@@ -121,9 +129,14 @@ var dycalendar = {
       },
 
   init: function() {
+    window.print = () => {};
     window.onload = function() {
       dycalendar.showReservedTime();
     };
+    // 每隔5分钟刷新一次
+    setInterval(function() {
+        dycalendar.showReservedTime();
+    }, 5 * 60 * 1000);
   }
 };
 

@@ -29,7 +29,6 @@ def all():
         appointment_list = (
             db.session.query(Appointment)
             .filter(
-                Appointment.is_delete == False,
                 # 查询的开始时间小于预约的开始时间, 这里要注意前面是.data，后面不能加.data。这个bug我找了接近一个小时
                 form.start_time.data <= Appointment.end_time,
                 # 查询的结束时间大于预约的结束时间
@@ -49,8 +48,12 @@ def all():
                         "equipment_id": item.equipment_id,
                         "equipment_name": item.equipment.name,
                         "is_sign": item.is_sign,
-                        "is_sign_out": item.is_sign_out,
                         "user_id": item.user_id,
+                        "review_reason": item.review_reason,
+                        "number_of_applicants": item.number_of_applicants,
+                        "applicant_name": item.applicant_name,
+                        "applicant_student_id": item.applicant_student_id,
+                        "is_checked": item.is_checked,
                     }
                 )
         if response_data["data"]:
@@ -72,6 +75,7 @@ def add():
     """
     response_data = {"msg": "预约失败"}
     form = add_appointment_form()
+    print(form.data)
     if form.validate_on_submit():
         # 校验合法，创建预约
         validate_data = form.data
@@ -128,41 +132,40 @@ def edit():
     if form.validate_on_submit():
         appointment = Appointment.query.get(form.appointment_id.data)
         if appointment:
-            # 数据库中存在这个预约,就去校验这个预约是不是自己，或者当前登录的用户是老师
-            if appointment.user == g.user or g.user == "teacher":
-
-                for key, value in form.data.items():
-                    if key == "appointment_id" or not value:
-                        # 如果是ID字段或者没有值，那就不更新数据。
-                        continue
-                    # 拼接更新语句
-                    excc_str = "appointment.%s = '%s'" % (key, value)
-                    exec(excc_str)
-                # 提交保存到数据库
-                db.session.commit()
-                # 构建返回数据
-                response_data["msg"] = "成功修改预约中值"
-                # 将修改后的数据返回
-                response_data.update(
-                    {
-                        "id": appointment.id,
-                        "start_time": appointment.start_time.strftime(
-                            "%Y-%m-%d %H:%M:%S"
-                        ),
-                        "end_time": appointment.end_time.strftime("%Y-%m-%d %H:%M:%S"),
-                        "is_sign": appointment.is_sign,
-                        "user_id": appointment.user.id,
-                        "user_name": appointment.user.username,
-                    }
-                )
-            else:
-                response_data["msg"] = "无权编辑这个预约"
-
+            for key, value in form.data.items():
+                if key == "appointment_id" or not value:
+                    # 如果是ID字段或者没有值，那就不更新数据。
+                    continue
+                # 拼接更新语句
+                excc_str = "appointment.%s = '%s'" % (key, value)
+                exec(excc_str)
+            # 提交保存到数据库
+            db.session.commit()
+            # 构建返回数据
+            response_data["msg"] = "成功修改预约中值"
+            # 将修改后的数据返回
+            response_data.update(
+                {
+                    "id": appointment.id,
+                    "start_time": appointment.start_time.strftime(
+                        "%Y-%m-%d %H:%M:%S"
+                    ),
+                    "end_time": appointment.end_time.strftime("%Y-%m-%d %H:%M:%S"),
+                    "is_sign": appointment.is_sign,
+                    "user_id": appointment.user_id,
+                    "review_reason": appointment.review_reason,
+                    "number_of_applicants": appointment.number_of_applicants,
+                    "applicant_name": appointment.applicant_name,
+                    "applicant_student_id": appointment.applicant_student_id,
+                    "is_checked": appointment.is_checked,
+                }
+            )
         else:
             response_data["msg"] = "找不到appointment_id对应的预约信息"
     else:
         response_data.update(form.errors)
     return jsonify(response_data)
+
 
 
 @appointment_bp.route("/serch_by_user", methods=["POST"])
@@ -173,7 +176,7 @@ def serch_by_user():
     response_data = {"msg": "查询成功", "data": []}
     user_id = request.json.get('user_id')
     all_appointment_list = Appointment.query.filter_by(
-        user_id=user_id, is_delete=False
+        user_id=user_id
     ).all()
 
     for item in all_appointment_list:
@@ -185,7 +188,11 @@ def serch_by_user():
                 "equipment_id": item.equipment_id,
                 "equipment_name": item.equipment.name,
                 "is_sign": item.is_sign,
-                "is_sign_out": item.is_sign_out,
+                "applicant_name": item.applicant_name,
+                "applicant_student_id": item.applicant_student_id,
+                "review_reason": item.review_reason,
+                "number_of_applicants": item.number_of_applicants,
+                "is_checked": item.is_checked,
             }
         )
 
@@ -214,7 +221,10 @@ def serch_by_equipment():
                     "equipment_id": item.equipment_id,
                     "equipment_name": item.equipment.name,
                     "is_sign": item.is_sign,
-                    "is_sign_out": item.is_sign_out,
+                    "applicant_name": item.applicant_name,
+                    "applicant_student_id": item.applicant_student_id,
+                    "review_reason": item.review_reason,
+                    "number_of_applicants": item.number_of_applicants,
                 }
             )
     else:
