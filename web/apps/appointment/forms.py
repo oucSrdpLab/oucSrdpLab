@@ -75,7 +75,6 @@ class edit_appointment_form(FlaskForm):
     #equipment_id = IntegerField("equipment_id")
     is_checked = IntegerField("is_checked", validators=[DataRequired("是否审核不能为空")])
 
-
     def validate_equipment_id(self, field):
         if field.data and not Equipment.query.get(field.data):
             raise ValidationError("修改的设备ID不存在")

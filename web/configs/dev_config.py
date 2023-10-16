@@ -1,31 +1,9 @@
-from paramiko import SSHClient, AutoAddPolicy
-
-# 服务器相关
-# SSH连接参数
-SSH_HOST = '10.140.33.49'
-SSH_PORT = 20022
-SSH_USERNAME = 'itstudio'
-SSH_PASSWORD = 'Publicitstudio'
-
-# 创建SSH客户端对象
-ssh_client = SSHClient()
-ssh_client.load_system_host_keys()
-ssh_client.set_missing_host_key_policy(AutoAddPolicy())
-
-# 连接SSH服务器
-ssh_client.connect(SSH_HOST, port=SSH_PORT, username=SSH_USERNAME, password=SSH_PASSWORD)
-
 # 数据库相关
-HOSTNAME="127.0.0.1"
+HOSTNAME="localhost"
 PORT=3306
 USERNAME="root"
-PASSWORD="Publicitstudio"
+PASSWORD="20230421"
 DATABASE="welab"
-# 创建SSH隧道
-transport = ssh_client.get_transport()
-channel = transport.open_channel('direct-tcpip', (HOSTNAME, PORT), (HOSTNAME, PORT))
-
-
 DB_URI = f"mysql+pymysql://{USERNAME}:{PASSWORD}@{HOSTNAME}:{PORT}/{DATABASE}?charset=utf8mb4"
 SQLALCHEMY_DATABASE_URI = DB_URI
 SQLALCHEMY_TRACK_MODIFICATIONS = True  # 追踪修改

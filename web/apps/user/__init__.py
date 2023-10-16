@@ -7,4 +7,4 @@ user_bp = Blueprint(
     url_prefix="/user",  # url前缀
 )
 
-from ..user.views import *
+from .views import *
