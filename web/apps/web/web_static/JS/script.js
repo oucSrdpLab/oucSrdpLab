@@ -46,7 +46,7 @@ var dycalendar = {
       body: JSON.stringify(requestBody)
     };
 
-    fetch('http://192.168.15.135:5000/appointment/all', requestOptions)
+    fetch('http://10.140.33.49:28000/appointment/all', requestOptions)
       .then(response => response.json())
       .then(data => {
         const reservedTime = data.data

@@ -157,7 +157,7 @@ def upload_image():
 
         image.save(save_path)
 
-        base_url = "http://192.168.15.135:28888"
+        base_url = "http://110.140.33.49:28000"
         # 构建返回的image_url
         image_url = f"{base_url}/{filename}"
         response_data["msg"] = "上传成功"
