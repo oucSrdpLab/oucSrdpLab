@@ -2,8 +2,10 @@
 需要安装web/requirements.txt（根目录下的不完整）
 
 # 运行
-我个人测试环境是windows 10虚拟机下使用pycharm，运行web/run.py  
-linux下可以使用`flask run --host 0.0.0.0 --port 5000`（5000为flask项目默认的测试端口，不适合生产环境，但是对于我们的项目影响不大）
+~~我个人测试环境是windows 10虚拟机下使用pycharm，运行web/run.py  
+linux下可以使用`flask run --host 0.0.0.0 --port 5000`（5000为flask项目默认的测试端口，不适合生产环境，但是对于我们的项目影响不大）~~
+
+切换成$oucSrdpLab-main$虚拟环境`conda activate oucSrdpLab-main`，已经能运行了，在oucSrdpLab-main/web目录下使用 `flask run --host=0.0.0.0 --port=8000`即可。要满足后台不间断运行则 `nohup flask run --host=0.0.0.0 --port=8000`即可
 
 
 # 服务器端
@@ -29,5 +31,5 @@ SSH 密码：Publicitstudio
 # Tips
 
 1. equipment/views.py第160行的base_url改为服务器ip和端口（我在windows虚拟机是用IIS web服务使外部访问获取图片资源的，linux上**可能**要继续用tomcat，图片地址放在web/static/uploads下）
-2. 我在linux服务器下，自己试过`flask run`并不能直接运行，会报**代码错误**（看看能不能解决，不能解决及时反馈一下，因为我测试用的是windows系统的pycharm直接跑的）
+2. ~~我在linux服务器下，自己试过`flask run`并不能直接运行，会报**代码错误**（看看能不能解决，不能解决及时反馈一下，因为我测试用的是windows系统的pycharm直接跑的）~~
 

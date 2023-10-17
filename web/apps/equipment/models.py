@@ -26,6 +26,10 @@ class Equipment(db.Model):
     # 设备简图，用来存放图片URL
     image_url = Column(Text, nullable=True, comment="设备简图")
 
+    image_inside = Column(Text, nullable=True, comment="inside")
+
+    brief = Column(String(256), unique=True, nullable=False, comment="brief")
+
     # 通过设备反查预约, 这里考虑的一个型号设备只有一个，如果有个相同设备，应该往设备表里面多次添加
     appointments = relationship("Appointment", backref="equipment", uselist=True)
 

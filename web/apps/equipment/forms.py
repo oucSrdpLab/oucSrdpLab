@@ -34,6 +34,17 @@ class AddEquipmentForm(FlaskForm):
         validators=[Length(max=512, message="设备图片URL不能超过512位")],
     )
 
+    image_inside = StringField(
+        "image_inside",
+        validators=[Length(max=512, message="inside图片URL不能超过512位")],
+    )
+
+    brief = StringField(
+        "brief",
+        validators=[DataRequired("brief can't be null"),Length(max=256,message="brief is too long")]
+    )
+
+
     def validate_name(self, field):
         """检验设备名字是否存在"""
         equipment = Equipment.query.filter_by(name=field.data).first()
@@ -81,6 +92,17 @@ class EditEquipmentForm(FlaskForm):
         "image_url",
         validators=[Length(max=512, message="设备图片URL不能超过512位")],
     )
+
+    image_inside = StringField(
+        "image_inside",
+        validators=[Length(max=512, message="inside图片URL不能超过512位")],
+    )
+
+    brief = StringField(
+        "brief",
+        validators=[DataRequired("brief can't be null"), Length(max=256, message="brief is too long")]
+    )
+
 
     def validate_name(self, field):
         """校验设备名字是否存在"""

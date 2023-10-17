@@ -105,4 +105,11 @@
     text-align: center;
 }
 
-
+.fac {
+    font-family: "华文楷体";
+    font-size: 18px;
+    -webkit-background-clip:text;            /*背景被裁剪到文字*/
+    -webkit-text-stroke:1px #0000FF;        /*文字描边*/
+    -webkit-text-fill-color:transparent;    /*设置文字的填充颜色*/
+    color:blue;
+}

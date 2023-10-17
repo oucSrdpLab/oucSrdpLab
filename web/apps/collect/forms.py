@@ -19,7 +19,7 @@ class commit_award_form(FlaskForm):
     institution = StringField("level", validators=[DataRequired("颁奖机构不能为空")])
     level = StringField("level", validators=[DataRequired("获奖等级不能为空")])
 
-    users = StringField("users", validators=[DataRequired("获奖人id不能为空，用'-'分割每个id")])
+    user_name = StringField("users", validators=[DataRequired("获奖人id不能为空，用'-'分割每个id")])
 
     def validate_users(self, field):
         """检查这些人在不在数据库里面"""

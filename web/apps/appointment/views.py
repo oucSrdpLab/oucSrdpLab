@@ -225,6 +225,7 @@ def serch_by_equipment():
                     "applicant_student_id": item.applicant_student_id,
                     "review_reason": item.review_reason,
                     "number_of_applicants": item.number_of_applicants,
+                    "is_checked":item.is_checked,
                 }
             )
     else:

@@ -23,9 +23,7 @@ def all_award():
         _temp_dict["level"] = item.level
         _temp_dict["institution"] = item.institution
 
-        _temp_dict["users"] = []
-        for user in item.users:
-            _temp_dict["users"].append(user.id)
+        _temp_dict["user_name"] = item.user_name
 
         response_data["data"].append(_temp_dict)
 
@@ -45,9 +43,9 @@ def commit():
             date=form.date.data,
             institution=form.institution.data,
             level=form.level.data,
+            user_name=form.user_name.data
         )
-        for user in form._my_exists_user:
-            award.users.append(user)
+
         # 别忘了把award也要提交到数据库
         db.session.add(award)
         db.session.commit()

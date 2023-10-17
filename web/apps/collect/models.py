@@ -45,7 +45,7 @@ class Award(db.Model):
     level = Column(String(64), nullable=False, comment="获奖等级")
 
     # 获奖人ID, 一个用户是可以获得多个奖，一个奖也会被多个人获得
-    users = relationship("User", backref="awards", secondary=UserToAward)
+    user_name = Column(String(64), nullable=False, comment="获奖人姓名")
 
     def __repr__(self):
         #  重写__repr__，为了print时好看，“自我描述” 功能

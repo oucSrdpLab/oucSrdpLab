@@ -1,5 +1,5 @@
 import sys
-sys.path.append('.')
+sys.path.append(r'.')
 from apps import app
 from apps import config
 from web.apps.exts import db

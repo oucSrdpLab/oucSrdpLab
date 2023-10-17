@@ -28,6 +28,8 @@ def all():
                     "kind": equipment.kind,
                     "capacity": equipment.capacity,
                     "image_url": equipment.image_url,
+                    "image_inside":equipment.image_inside,
+                    "brief":equipment.brief,
                 }
             )
 
@@ -150,14 +152,14 @@ def upload_image():
         # 为了确保安全，使用secure_filename方法对文件名进行处理
         filename = secure_filename(image.filename)
         # 保存文件到指定路径
-        save_path = os.path.join("static", "uploads", filename)
+        save_path = "/home/itstudio/apache-tomcat-10.1.13/webapps/equip_cover/"+filename
 
         # 创建目录（如果不存在）
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
 
         image.save(save_path)
 
-        base_url = "http://110.140.33.49:28000/equip_cover"
+        base_url = "http://10.140.33.49:28888/equip_cover"
         # 构建返回的image_url
         image_url = f"{base_url}/{filename}"
         response_data["msg"] = "上传成功"
@@ -168,6 +170,42 @@ def upload_image():
 
     return jsonify(response_data)
 
+
+@equipment_bp.route("/upload_inside_image", methods=["POST"])
+def upload_inside_image():
+    """接收并保存小程序端发送的image，并返回image_url"""
+
+    response_data = {"msg": "上传失败"}
+
+    # 检查文件是否在请求中
+    if 'image' not in request.files:
+        response_data["msg"] = "未找到上传的图片"
+        return jsonify(response_data)
+
+    image = request.files['image']
+
+    # 检查文件名和文件类型是否合法
+    if image and allowed_file(image.filename):
+        # 为了确保安全，使用secure_filename方法对文件名进行处理
+        filename = secure_filename(image.filename)
+        # 保存文件到指定路径
+        save_path = "/home/itstudio/apache-tomcat-10.1.13/webapps/equip_inside/"+filename
+
+        # 创建目录（如果不存在）
+        os.makedirs(os.path.dirname(save_path), exist_ok=True)
+
+        image.save(save_path)
+
+        base_url = "http://10.140.33.49:28888/equip_inside"
+        # 构建返回的image_url
+        image_url = f"{base_url}/{filename}"
+        response_data["msg"] = "上传成功"
+        response_data["image_url"] = image_url
+
+    else:
+        response_data["msg"] = "文件格式不支持或文件名非法"
+
+    return jsonify(response_data)
 
 
 def allowed_file(filename):
