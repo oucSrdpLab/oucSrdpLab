@@ -30,6 +30,7 @@ def all():
                     "image_url": equipment.image_url,
                     "image_inside":equipment.image_inside,
                     "brief":equipment.brief,
+                    "disable":equipment.disable
                 }
             )
 
@@ -71,9 +72,7 @@ def add():
 # @login_required
 def delete():
     """删除一个设备，必须要登录，且只有老师才能删除"""
-
     response_data = {"msg": "删除失败"}
-
     form = DeleteEquipmentForm()
     if form.validate_on_submit():
         equipment = Equipment.query.get(form.equipment_id.data)
@@ -207,6 +206,39 @@ def upload_inside_image():
 
     return jsonify(response_data)
 
+@equipment_bp.route("/disable", methods=["POST"])
+def diable_equipment():
+    response_data = {"msg":"禁用失败"}
+    form = DeleteEquipmentForm()
+    if form.validate_on_submit():
+        equipment = Equipment.query.get(form.equipment_id.data)
+        if equipment:
+            equipment.disable = 1
+            db.session.commit()
+            response_data = "成功禁用设备，设备名: %s" % equipment.name
+        else:
+            response_data["msg"] = "输入的设备ID有误，需要禁用的设备不存在或已禁用"
+    else:
+        response_data.update(form.errors)
+
+    return jsonify(response_data)
+
+@equipment_bp.route("/enable", methods=["POST"])
+def enable_equipment():
+    response_data = {"msg": "解除禁用失败"}
+    form = DeleteEquipmentForm()
+    if form.validate_on_submit():
+        equipment = Equipment.query.get(form.equipment_id.data)
+        if equipment:
+            equipment.disable = 0  # 将 disable 设置为 0，表示解除禁用
+            db.session.commit()
+            response_data = "成功解除禁用设备，设备名：%s" % equipment.name
+        else:
+            response_data["msg"] = "输入的设备ID有误，需要解除禁用的设备不存在或未被禁用"
+    else:
+        response_data.update(form.errors)
+
+    return jsonify(response_data)
 
 def allowed_file(filename):
     """检查文件扩展名是否支持"""

@@ -44,7 +44,7 @@ var dycalendar = {
       body: JSON.stringify(requestBody)
     };
 
-    fetch('http://10.140.33.49:28000/appointment/all', requestOptions)
+    fetch('https://server.itstudio.club:20443/appointment/all', requestOptions)
       .then(response => response.json())
       .then(data => {
         const reservedTime = data.data
@@ -72,6 +72,7 @@ var dycalendar = {
         const timeList = document.querySelector('#reserved-time');
 
         reservedTime.forEach(order => {
+          console.log("name",order.equipment_name)
           const tr = document.createElement('tr');
           const equipmentNameTd = document.createElement('td');
           equipmentNameTd.textContent = order.equipment_name;
@@ -130,7 +131,7 @@ var dycalendar = {
       body: JSON.stringify(requestBody)
     };
 
-    fetch('http://10.140.33.49:28000/sign/signature', requestOptions)
+    fetch('https://server.itstudio.club:20443/sign/signature', requestOptions)
       .then(response => response.json())
       .then(data => {
         console.log(data);

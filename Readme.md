@@ -5,7 +5,7 @@
 ~~我个人测试环境是windows 10虚拟机下使用pycharm，运行web/run.py  
 linux下可以使用`flask run --host 0.0.0.0 --port 5000`（5000为flask项目默认的测试端口，不适合生产环境，但是对于我们的项目影响不大）~~
 
-切换成$oucSrdpLab-main$虚拟环境`conda activate oucSrdpLab-main`，已经能运行了，在oucSrdpLab-main/web目录下使用 `flask run --host=0.0.0.0 --port=8000`即可。要满足后台不间断运行则 `nohup flask run --host=0.0.0.0 --port=8000`即可
+切换成$oucSrdpLab-main$虚拟环境`conda activate oucSrdpLab-main`，已经能运行了，在oucSrdpLab-main/web目录下使用 `flask run --host=0.0.0.0 --port=8000`即可。要满足后台不间断运行则 `nohup flask run --host=0.0.0.0 --port=8000 --cert=server.itstudio.club.crt --key=server.itstudio.club.key`即可
 
 
 # 服务器端

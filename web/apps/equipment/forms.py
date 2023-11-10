@@ -44,6 +44,8 @@ class AddEquipmentForm(FlaskForm):
         validators=[DataRequired("brief can't be null"),Length(max=256,message="brief is too long")]
     )
 
+    disable = IntegerField(default=0)
+
 
     def validate_name(self, field):
         """检验设备名字是否存在"""
@@ -109,3 +111,4 @@ class EditEquipmentForm(FlaskForm):
         equipment = Equipment.query.filter_by(name=field.data).first()
         if equipment:
             raise ValidationError("设备名已存在")
+

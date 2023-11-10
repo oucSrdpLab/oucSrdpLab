@@ -30,6 +30,8 @@ class Equipment(db.Model):
 
     brief = Column(String(256), unique=True, nullable=False, comment="brief")
 
+    disable = Column(Integer, nullable=True, comment="是否禁用")
+
     # 通过设备反查预约, 这里考虑的一个型号设备只有一个，如果有个相同设备，应该往设备表里面多次添加
     appointments = relationship("Appointment", backref="equipment", uselist=True)
 

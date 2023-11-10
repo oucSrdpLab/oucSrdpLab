@@ -27,6 +27,8 @@ class Appointment(db.Model):
     applicant_name = Column(String(255), comment="预约人姓名")
     applicant_student_id = Column(String(255), comment="预约人学号")
     is_checked = Column(Integer, default=0, comment="是否审核")
+    telephone = Column(String(20), comment="预约人电话")
+    equipment_name = Column(String(20), comment="仪器名")
 
     # 外键字段，一个预约对应一个学生，一个学生对应多个预约。
     user_id = Column(Integer, ForeignKey("user.id"), comment="预约人ID")

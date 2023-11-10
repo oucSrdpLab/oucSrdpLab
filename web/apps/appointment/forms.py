@@ -27,7 +27,8 @@ class add_appointment_form(FlaskForm):
     end_time = StringField("end_time", validators=[DataRequired("结束时间不能为空"), validate_end_time])
     equipment_id = StringField("equipment_id", validators=[DataRequired("预约器材ID不能为空")])
     user_id = StringField("user_id", validators=[DataRequired("预约ID不能为空")])
-
+    equipment_name = StringField("equipment_name",validators=[DataRequired("仪器名不能为空")])
+    telephone = StringField("telephone", validators=[DataRequired("电话不能为空")])
     review_reason = StringField("review_reason", validators=[DataRequired("预约原因不能为空"), Length(max=255)])
     number_of_applicants = IntegerField("number_of_applicants", validators=[DataRequired("预约人数不能为空"), NumberRange(min=1)])
     applicant_name = StringField("applicant_name", validators=[DataRequired("预约人姓名不能为空"), Length(max=255)])

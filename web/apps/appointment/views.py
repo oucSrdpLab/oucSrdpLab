@@ -46,7 +46,6 @@ def all():
                         "start_time": item.start_time.strftime("%Y-%m-%d %H:%M:%S"),
                         "end_time": item.end_time.strftime("%Y-%m-%d %H:%M:%S"),
                         "equipment_id": item.equipment_id,
-                        "equipment_name": item.equipment.name,
                         "is_sign": item.is_sign,
                         "user_id": item.user_id,
                         "review_reason": item.review_reason,
@@ -54,6 +53,8 @@ def all():
                         "applicant_name": item.applicant_name,
                         "applicant_student_id": item.applicant_student_id,
                         "is_checked": item.is_checked,
+                        "equipment_name":item.equipment_name,
+                        "telephone":item.telephone
                     }
                 )
         if response_data["data"]:
@@ -73,24 +74,21 @@ def add():
     """创建预约,必须要给出起止时间、用户要先登录
     TODO 查时间校验算法，同一个设备的预约起止时间不能重叠
     """
-    response_data = {"msg": "预约失败"}
     form = add_appointment_form()
-    print(form.data)
     if form.validate_on_submit():
         # 校验合法，创建预约
         validate_data = form.data
-
-
         appointment = Appointment(**validate_data)
         db.session.add(appointment)
         db.session.commit()
-        response_data["msg"] = "预约成功"
-        response_data["appointment_id"] = appointment.id
-
+        response_data = {"msg": "预约成功", "appointment_id": appointment.id}
     else:
         # 返回错误字段信息
-        response_data.update(form.errors)
-
+        errors = []
+        for field, error in form.errors.items():
+            errors.append(f"{field}: {error[0]}")
+        error_msg = "; ".join(errors)
+        response_data = {"msg": f"预约失败: {error_msg}"}
     return jsonify(response_data)
 
 
